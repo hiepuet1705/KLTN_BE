@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -55,11 +56,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) ->
-//                        authorize.anyRequest().authenticated()
-                                authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                                        // .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                                        .requestMatchers("/api/auth/**").permitAll()
-                                        .anyRequest().authenticated()
+                        authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                                // .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
+                                .anyRequest().authenticated()
                 ).exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .httpBasic(Customizer.withDefaults()).sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

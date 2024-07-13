@@ -63,7 +63,9 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new AuthAPIException(HttpStatus.BAD_REQUEST, "Username is already exists");
         }
-
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new AuthAPIException(HttpStatus.BAD_REQUEST, "Email is already exists");
+        }
 
         // map
         User user = new User();
