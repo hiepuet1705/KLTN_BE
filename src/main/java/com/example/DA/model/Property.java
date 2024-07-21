@@ -2,11 +2,19 @@ package com.example.DA.model;
 
 import com.example.DA.model.enums_entity.*;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "Properties")
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Property extends DateTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +29,7 @@ public class Property extends DateTime {
 
     private String title;
     private String description;
-    private Long price;
+    private Integer price;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

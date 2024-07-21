@@ -28,17 +28,13 @@ public class Post extends DateTime {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    private LocalDateTime createdAt;
-
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('pending', 'approved', 'rejected')")
     private PostStatus status = PostStatus.PENDING;
 
-    private LocalDateTime updatedAt;
-
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('for_sale', 'for_rent')")
     private PostType postType;
-    
+
 }
 

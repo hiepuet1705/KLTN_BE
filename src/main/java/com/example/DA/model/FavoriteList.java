@@ -27,9 +27,5 @@ public class FavoriteList extends DateTime {
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
 
-    @Column(name = "added_date")
-    private LocalDateTime addedDate;
-
-
 }
 

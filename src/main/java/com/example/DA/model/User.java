@@ -23,7 +23,7 @@ import java.util.Set;
 public class User extends DateTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String name;
     private String phone;
     @Column(nullable = false, unique = true)
