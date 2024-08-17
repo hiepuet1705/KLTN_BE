@@ -19,4 +19,8 @@ public class PostDTO {
     private Integer propertyId;
     private PostStatus status;
     private PostType postType;
+    private Integer charged;
+    private Integer property;
+    private Integer postUser;
+    
 }

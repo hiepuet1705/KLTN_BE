@@ -30,7 +30,7 @@ public class Property extends DateTime {
     private String title;
     private String description;
     private Integer price;
-
+    private Double area;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -58,6 +58,5 @@ public class Property extends DateTime {
     )
     private Set<Utility> utilities;
 
-    // Getters and setters
 }
 

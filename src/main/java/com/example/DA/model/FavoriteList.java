@@ -24,8 +24,8 @@ public class FavoriteList extends DateTime {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "property_id", nullable = false)
-    private Property property;
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
 }
 

@@ -23,6 +23,7 @@ public class Post extends DateTime {
 
     private String postTitle;
     private String postContent;
+    private Integer charged = 0;
 
     @ManyToOne
     @JoinColumn(name = "property_id")
@@ -35,6 +36,12 @@ public class Post extends DateTime {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('for_sale', 'for_rent')")
     private PostType postType;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private Long price;
 
 }
 

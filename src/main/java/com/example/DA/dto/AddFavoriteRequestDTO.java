@@ -16,5 +16,5 @@ public class AddFavoriteRequestDTO {
     private Integer userId;
 
     @NotNull
-    private Integer propertyId;
+    private Integer postId;
 }

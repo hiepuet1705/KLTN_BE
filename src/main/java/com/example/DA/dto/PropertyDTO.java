@@ -24,6 +24,7 @@ public class PropertyDTO {
     private String phuong;
     private String district;
     private String province;
-    
+    private Double area;
+
 }
 

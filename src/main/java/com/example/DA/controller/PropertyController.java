@@ -2,7 +2,6 @@ package com.example.DA.controller;
 
 
 import com.example.DA.dto.PropertyDTO;
-import com.example.DA.model.Property;
 import com.example.DA.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

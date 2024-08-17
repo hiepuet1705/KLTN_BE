@@ -4,7 +4,6 @@ package com.example.DA.controller;
 import com.example.DA.dto.AddFavoriteRequestDTO;
 import com.example.DA.model.FavoriteList;
 import com.example.DA.service.FavoriteListService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +18,8 @@ public class FavoriteListController {
     @Autowired
     private FavoriteListService favoriteListService;
 
-    @PostMapping()
-    public ResponseEntity<FavoriteList> addFavorite(@Valid @RequestBody AddFavoriteRequestDTO requestDTO) {
+    @PostMapping
+    public ResponseEntity<FavoriteList> addFavorite(@RequestBody AddFavoriteRequestDTO requestDTO) {
         FavoriteList favoriteList = favoriteListService.addFavorite(requestDTO);
         return new ResponseEntity<>(favoriteList, HttpStatus.OK);
     }

@@ -1,12 +1,16 @@
 package com.example.DA.service.imp;
 
 import com.example.DA.dto.PropertyDTO;
+import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.model.Property;
-import com.example.DA.model.Utility;
 import com.example.DA.repo.*;
 import com.example.DA.service.PropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,29 +73,12 @@ public class PropertyServiceImpl implements PropertyService {
                 .collect(Collectors.toList());
     }
 
-    //    @Override
-//    public void addUtilityToProperty(Integer propertyId, Integer utilityId) {
-//        Property property = propertyRepository.findById(propertyId).orElse(null);
-//        Utility utility = utilityRepository.findById(utilityId).orElse(null);
-//        if (property != null && utility != null) {
-//            property.getUtilities().add(utility);
-//            propertyRepository.save(property);
-//        }
-//    }
-//
-//    @Override
-//    public void removeUtilityFromProperty(Integer propertyId, Integer utilityId) {
-//        Property property = propertyRepository.findById(propertyId).orElse(null);
-//        Utility utility = utilityRepository.findById(utilityId).orElse(null);
-//        if (property != null && utility != null) {
-//            property.getUtilities().remove(utility);
-//            propertyRepository.save(property);
-//        }
-//    }
     @Override
     public void deleteProperty(Integer propertyId) {
         propertyRepository.deleteById(propertyId);
     }
+
+//
 
     private PropertyDTO convertToDTO(Property property) {
         PropertyDTO dto = modelMapper.map(property, PropertyDTO.class);
@@ -103,7 +90,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     private Property convertToEntity(PropertyDTO dto) {
         Property property = modelMapper.map(dto, Property.class);
-       
+
         return property;
     }
 
