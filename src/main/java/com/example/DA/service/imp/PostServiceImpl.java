@@ -88,7 +88,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDTO> getFavoritePost(Integer userId) {
-        List<Post> posts = postRepository.
+
+        List<Post> posts = postRepository.findAll();
+        return posts.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+
     }
 
 
