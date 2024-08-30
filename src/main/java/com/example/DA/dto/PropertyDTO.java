@@ -25,6 +25,12 @@ public class PropertyDTO {
     private String district;
     private String province;
     private Double area;
+    private Integer sophong;
+    private Integer soTang;
+    private Integer soToilet;
+    private Double lat;
+    private Double lon;
+    private Integer age;
 
 }
 

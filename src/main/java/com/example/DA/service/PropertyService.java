@@ -15,6 +15,8 @@ public interface PropertyService {
 
     List<PropertyDTO> getAllProperties();
 
+    PropertyDTO updatePropertyById(Integer propertyId, PropertyDTO propertyDTO);
+
     void deleteProperty(Integer propertyId);
 
 

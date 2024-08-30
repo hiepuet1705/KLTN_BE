@@ -31,6 +31,13 @@ public class Property extends DateTime {
     private String description;
     private Integer price;
     private Double area;
+    // Còn thêm nhiều trường nữa
+    private Integer sophong;
+    private Integer soTang;
+    private Integer soToilet;
+    private Double lat;
+    private Double lon;
+    private Integer age;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

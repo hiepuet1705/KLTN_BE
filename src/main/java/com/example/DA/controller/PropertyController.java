@@ -24,6 +24,11 @@ public class PropertyController {
         return ResponseEntity.ok(savedProperty);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PropertyDTO> updateProperty(@PathVariable("id") Integer propertyId, @RequestBody PropertyDTO propertyDTO) {
+        PropertyDTO updatedProperty = propertyService.updatePropertyById(propertyId, propertyDTO);
+        return ResponseEntity.ok(updatedProperty);
+    }
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")

@@ -13,8 +13,8 @@ import java.util.Date;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(AuthAPIException.class) // throw new ResourceException
-    public ResponseEntity<ErrorDetails> handleBlogAPIException(AuthAPIException blogAPIException,
+    @ExceptionHandler(ApiException.class) // throw new ResourceException
+    public ResponseEntity<ErrorDetails> handleBlogAPIException(ApiException blogAPIException,
                                                                WebRequest webRequest) {
 
         ErrorDetails errorDetails = new ErrorDetails(new Date(), blogAPIException.getMessage(),

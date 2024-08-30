@@ -2,6 +2,7 @@ package com.example.DA.service.imp;
 
 import com.example.DA.dto.PropertyDTO;
 import com.example.DA.dto.PostSearchCriteria;
+import com.example.DA.exception.ApiException;
 import com.example.DA.model.Property;
 import com.example.DA.repo.*;
 import com.example.DA.service.PropertyService;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,7 +64,8 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public PropertyDTO getPropertyById(Integer propertyId) {
-        Property property = propertyRepository.findById(propertyId).orElse(null);
+        Property property = propertyRepository.findById(propertyId).orElseThrow(() ->
+                new RuntimeException("property with " + propertyId + " not found"));
         return property != null ? convertToDTO(property) : null;
     }
 
@@ -72,6 +75,17 @@ public class PropertyServiceImpl implements PropertyService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public PropertyDTO updatePropertyById(Integer propertyId, PropertyDTO propertyDTO) {
+        // Lấy property từ database hoặc ném ngoại lệ nếu không tìm thấy
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "Property not found"));
+        modelMapper.map(propertyDTO, property);
+        Property updatedProperty = propertyRepository.save(property);
+        return convertToDTO(updatedProperty);
+    }
+
 
     @Override
     public void deleteProperty(Integer propertyId) {

@@ -18,12 +18,14 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Autowired
     public ProvinceServiceImpl(ProvinceRepository provinceRepository) {
+
         this.provinceRepository = provinceRepository;
     }
 
 
     @Override
     public List<Province> getAllProvinces() {
+
         return provinceRepository.findAll();
     }
 }

@@ -3,7 +3,7 @@ package com.example.DA.service.imp;
 
 import com.example.DA.dto.LoginDto;
 import com.example.DA.dto.RegisterDto;
-import com.example.DA.exception.AuthAPIException;
+import com.example.DA.exception.ApiException;
 import com.example.DA.model.Role;
 import com.example.DA.model.User;
 import com.example.DA.repo.RoleRepository;
@@ -61,10 +61,10 @@ public class AuthServiceImpl implements AuthService {
         // add check for username exists in database
 
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new AuthAPIException(HttpStatus.BAD_REQUEST, "Username is already exists");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Username is already exists");
         }
         if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new AuthAPIException(HttpStatus.BAD_REQUEST, "Email is already exists");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Email is already exists");
         }
 
         // map
@@ -87,10 +87,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String registerAdmin(RegisterDto registerDto) {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new AuthAPIException(HttpStatus.BAD_REQUEST, "Username is already exists");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Username is already exists");
         }
         if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new AuthAPIException(HttpStatus.BAD_REQUEST, "Email is already exists");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Email is already exists");
         }
 
         // map
