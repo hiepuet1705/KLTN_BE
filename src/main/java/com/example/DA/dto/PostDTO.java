@@ -7,19 +7,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostDTO {
     private Integer postId;
     private String postTitle;
     private String postContent;
-    private Integer propertyId;
-    private PostStatus status;
-    private PostType postType = PostType.FOR_SALE;
     private Integer charged;
-    private Integer postUser;
-
+    private Long price;
+    private String status;
+    private String postType;
+    private Integer propertyId;
+    private Integer userId;
 }

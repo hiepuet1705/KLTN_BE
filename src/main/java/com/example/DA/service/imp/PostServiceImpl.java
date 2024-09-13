@@ -61,7 +61,7 @@ public class PostServiceImpl implements PostService {
             Post post = optionalPost.get();
             modelMapper.map(postDTO, post);
             post.setProperty(propertyRepository.findById(postDTO.getPropertyId()).orElse(null));
-            post.setUser(userRepository.findById(postDTO.getPostUser()).orElse(null));
+            post.setUser(userRepository.findById(postDTO.getUserId()).orElse(null));
             post = postRepository.save(post);
             return convertToDTO(post);
         }
@@ -105,7 +105,7 @@ public class PostServiceImpl implements PostService {
     private Post convertToEntity(PostDTO postDTO) {
         Post post = modelMapper.map(postDTO, Post.class);
         post.setProperty(propertyRepository.findById(postDTO.getPropertyId()).orElse(null));
-        post.setUser(userRepository.findById(postDTO.getPostUser()).orElse(null));
+        post.setUser(userRepository.findById(postDTO.getUserId()).orElse(null));
         return post;
     }
 }

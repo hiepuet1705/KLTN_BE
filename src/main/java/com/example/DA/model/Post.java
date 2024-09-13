@@ -3,6 +3,7 @@ package com.example.DA.model;
 import com.example.DA.model.enums.PostStatus;
 import com.example.DA.model.enums.PostType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,13 +30,14 @@ public class Post extends DateTime {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('pending', 'approved', 'rejected')")
-    private PostStatus status = PostStatus.PENDING;
+    @Pattern(regexp = "pending|approved|rejected", message = "status must be 'pending', 'approved', or 'rejected'")
+    @Column(name = "status", nullable = false)
+    private String status = "pending";  // default value
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('for_sale', 'for_rent')")
-    private PostType postType;
+    // Restrict postType to 'for_sale' or 'for_rent'
+    @Pattern(regexp = "for_sale|for_rent", message = "postType must be 'for_sale' or 'for_rent'")
+    @Column(name = "post_type", nullable = false)
+    private String postType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
