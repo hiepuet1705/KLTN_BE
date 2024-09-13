@@ -4,7 +4,9 @@ import com.example.DA.dto.PropertyDTO;
 import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.exception.ApiException;
 import com.example.DA.model.Property;
+import com.example.DA.model.Utility;
 import com.example.DA.repo.*;
+import com.example.DA.service.DistanceService;
 import com.example.DA.service.PropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class PropertyServiceImpl implements PropertyService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    DistanceService distanceService;
+
     @Override
     public PropertyDTO saveProperty(PropertyDTO dto) {
         Property property = convertToEntity(dto);
@@ -73,6 +78,21 @@ public class PropertyServiceImpl implements PropertyService {
     public List<PropertyDTO> getAllProperties() {
         return propertyRepository.findAll().stream()
                 .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<Utility> getNearbyUtilities(Integer propertyId) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        double propertyLat = property.getLat();
+        double propertyLon = property.getLon();
+
+        List<Utility> allUtilities = utilityRepository.findAll();
+
+        // Lọc danh sách utilities có khoảng cách nhỏ hơn 5km
+        return allUtilities.stream()
+                .filter(utility -> distanceService.calculateDistance(propertyLat, propertyLon, utility.getLat(), utility.getLon()) < 5)
                 .collect(Collectors.toList());
     }
 

@@ -27,6 +27,9 @@ public class Utility extends DateTime {
     private String utilityName;
     private String location;
 
+    private Double lat;
+    private Double lon;
+
     @ManyToOne
     @JoinColumn(name = "phuong_id")
     private Phuong phuong;

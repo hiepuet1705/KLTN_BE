@@ -18,9 +18,8 @@ public class PostDTO {
     private String postContent;
     private Integer propertyId;
     private PostStatus status;
-    private PostType postType;
+    private PostType postType = PostType.FOR_SALE;
     private Integer charged;
-    private Integer property;
     private Integer postUser;
-    
+
 }

@@ -41,7 +41,7 @@ public class AuthController {
 
     @PostMapping(value = "/register/admin")
     public ResponseEntity<String> registerAdmin(@RequestBody RegisterDto registerDto) {
-        String response = authService.register(registerDto);
+        String response = authService.registerAdmin(registerDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
     }
