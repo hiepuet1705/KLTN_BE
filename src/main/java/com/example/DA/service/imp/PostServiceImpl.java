@@ -2,7 +2,10 @@ package com.example.DA.service.imp;
 
 import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
+import com.example.DA.dto.PostWithPropertyDTO;
+import com.example.DA.dto.PropertyDTO;
 import com.example.DA.model.Post;
+import com.example.DA.model.Property;
 import com.example.DA.repo.PostRepository;
 import com.example.DA.repo.PropertyRepository;
 import com.example.DA.repo.UserRepository;
@@ -95,6 +98,45 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
 
 
+    }
+
+    @Override
+    public PostWithPropertyDTO getPostWithProperty(Integer postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        Property property = post.getProperty();
+        PropertyDTO propertyDTO = new PropertyDTO(
+                property.getPropertyId(),
+                property.getStatus().getStatusId(),
+                property.getOwner().getId(),
+                property.getTitle(),
+                property.getDescription(),
+                property.getPrice(),
+                property.getCategory().getCategoryId(),
+                property.getLocation(),         // Thêm location
+                property.getPhuong().getName(),           // Thêm phuong
+                property.getDistrict().getName(),         // Thêm district
+                property.getProvince().getName(),         // Thêm province
+                property.getArea(),             // Thêm area
+                property.getSophong(),          // Thêm số phòng
+                property.getSoTang(),           // Thêm số tầng
+                property.getSoToilet(),         // Thêm số toilet
+                property.getLat(),              // Thêm tọa độ lat
+                property.getLon(),              // Thêm tọa độ lon
+                property.getAge()               // Thêm tuổi của bất động sản
+        );
+        PostWithPropertyDTO postDTO = new PostWithPropertyDTO(
+                post.getPostId(),
+                post.getPostTitle(),
+                post.getPostContent(),
+                post.getCharged(),
+                post.getPrice(),
+                post.getStatus(),
+                post.getPostType(),
+                propertyDTO,  // Đưa PropertyDTO vào PostDTO
+                post.getUser().getId()
+        );
+
+        return postDTO;
     }
 
 

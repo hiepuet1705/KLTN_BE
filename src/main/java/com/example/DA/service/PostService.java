@@ -2,6 +2,7 @@ package com.example.DA.service;
 
 import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
+import com.example.DA.dto.PostWithPropertyDTO;
 import com.example.DA.model.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +23,6 @@ public interface PostService {
     public Page<Post> searchPost(PostSearchCriteria postSearchCriteria, Pageable pageable);
 
     public List<PostDTO> getFavoritePost(Integer userId);
+
+    public PostWithPropertyDTO getPostWithProperty(Integer postId);
 }

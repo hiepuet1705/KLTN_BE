@@ -2,6 +2,7 @@ package com.example.DA.controller;
 
 import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
+import com.example.DA.dto.PostWithPropertyDTO;
 import com.example.DA.model.Post;
 import com.example.DA.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping
-    public List<PostDTO> getAllPosts() {
-        return postService.getAllPosts();
+    @GetMapping("/{id}")
+    public PostWithPropertyDTO getPostWithProperty(@PathVariable Integer id) {
+        return postService.getPostWithProperty(id);
     }
 
     @GetMapping("/search")
@@ -31,11 +32,11 @@ public class PostController {
         return postService.searchPost(criteria, pageable);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PostDTO> getPostById(@PathVariable Integer id) {
-        PostDTO postDTO = postService.getPostById(id);
-        return postDTO != null ? ResponseEntity.ok(postDTO) : ResponseEntity.notFound().build();
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<PostDTO> getPostById(@PathVariable Integer id) {
+//        PostDTO postDTO = postService.getPostById(id);
+//        return postDTO != null ? ResponseEntity.ok(postDTO) : ResponseEntity.notFound().build();
+//    }
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
