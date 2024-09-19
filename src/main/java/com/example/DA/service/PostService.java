@@ -20,7 +20,7 @@ public interface PostService {
 
     void deletePost(Integer postId);
 
-    public Page<Post> searchPost(PostSearchCriteria postSearchCriteria, Pageable pageable);
+    public Page<PostWithPropertyDTO> searchPost(PostSearchCriteria postSearchCriteria, Pageable pageable);
 
     public List<PostDTO> getFavoritePost(Integer userId);
 

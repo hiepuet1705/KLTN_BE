@@ -28,15 +28,10 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public Page<Post> searchPosts(PostSearchCriteria criteria, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+    public Page<PostWithPropertyDTO> searchPosts(@RequestBody PostSearchCriteria criteria, @PageableDefault(size = 10, page = 0) Pageable pageable) {
         return postService.searchPost(criteria, pageable);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<PostDTO> getPostById(@PathVariable Integer id) {
-//        PostDTO postDTO = postService.getPostById(id);
-//        return postDTO != null ? ResponseEntity.ok(postDTO) : ResponseEntity.notFound().build();
-//    }
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")

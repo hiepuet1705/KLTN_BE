@@ -62,7 +62,7 @@ public class PropertyServiceImpl implements PropertyService {
 
         property.setPhuong(phuongRepository.findByName(dto.getPhuong()).orElse(null));
         property.setDistrict(districtRepository.findByName(dto.getDistrict()).orElse(null));
-        property.setProvince(provinceRepository.findByName(dto.getProvince()).orElse(null));
+        property.setProvince(provinceRepository.findByName(dto.getProvince()));
         Property savedProperty = propertyRepository.save(property);
         return convertToDTO(savedProperty);
     }
@@ -112,9 +112,8 @@ public class PropertyServiceImpl implements PropertyService {
         propertyRepository.deleteById(propertyId);
     }
 
-//
 
-    private PropertyDTO convertToDTO(Property property) {
+    public PropertyDTO convertToDTO(Property property) {
         PropertyDTO dto = modelMapper.map(property, PropertyDTO.class);
         dto.setPhuong(property.getPhuong().getName());
         dto.setDistrict(property.getDistrict().getName());
@@ -122,7 +121,7 @@ public class PropertyServiceImpl implements PropertyService {
         return dto;
     }
 
-    private Property convertToEntity(PropertyDTO dto) {
+    public Property convertToEntity(PropertyDTO dto) {
         Property property = modelMapper.map(dto, Property.class);
 
         return property;

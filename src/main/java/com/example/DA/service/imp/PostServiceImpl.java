@@ -4,16 +4,17 @@ import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.dto.PostWithPropertyDTO;
 import com.example.DA.dto.PropertyDTO;
+import com.example.DA.exception.ApiException;
 import com.example.DA.model.Post;
 import com.example.DA.model.Property;
-import com.example.DA.repo.PostRepository;
-import com.example.DA.repo.PropertyRepository;
-import com.example.DA.repo.UserRepository;
+import com.example.DA.repo.*;
 import com.example.DA.service.PostService;
+import com.example.DA.service.PropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +36,12 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private ProvinceRepository provinceRepository;
+
+    @Autowired
+    private PropertyServiceImpl propertyService;
 
 
     @Override
@@ -77,16 +84,39 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> searchPost(PostSearchCriteria criteria, Pageable pageable) {
-        return postRepository.searchPosts(
+    public Page<PostWithPropertyDTO> searchPost(PostSearchCriteria criteria, Pageable pageable) {
+        String province = criteria.getProvince();
+        System.out.println(province);
+        Integer provinceId = provinceRepository.findByName(province).getId();
+        Page<Post> posts = postRepository.searchPosts(
                 criteria.getDistrict(),
-                criteria.getProvince(),
+                provinceId,
                 criteria.getMinPrice(),
                 criteria.getMaxPrice(),
                 criteria.getStatus(),
                 criteria.getMinArea(),
                 criteria.getMaxArea(),
                 pageable);
+
+        return posts.map(this::convertToPostWithPropertyDTO);
+
+    }
+
+    private PostWithPropertyDTO convertToPostWithPropertyDTO(Post post) {
+        PostWithPropertyDTO dto = new PostWithPropertyDTO();
+        dto.setPostId(post.getPostId());
+        dto.setPostTitle(post.getPostTitle());
+        dto.setPostContent(post.getPostContent());
+        dto.setCharged(post.getCharged());
+        dto.setPrice(post.getPrice());
+        dto.setStatus(post.getStatus());
+        dto.setPostType(post.getPostType());
+
+        PropertyDTO propertyDTO = propertyService.convertToDTO(post.getProperty());
+        dto.setProperty(propertyDTO);
+        dto.setUserId(post.getUser().getId());
+
+        return dto;
     }
 
     @Override
