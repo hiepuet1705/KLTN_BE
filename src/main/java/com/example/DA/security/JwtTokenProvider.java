@@ -2,9 +2,12 @@ package com.example.DA.security;
 
 
 import com.example.DA.exception.ApiException;
+import com.example.DA.model.User;
+import com.example.DA.repo.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,6 +26,9 @@ public class JwtTokenProvider {
     private String jwtSecret;
     @Value("${app-jwt-expiration-milliseconds}")
     private Integer jwtExpirationDate;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     private Key key() {
@@ -37,8 +44,10 @@ public class JwtTokenProvider {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
+        Integer userId = getUserIdFromAuthentication(authentication);
         String token = Jwts.builder()
                 .setSubject(username)
+                .claim("userId", userId)
                 .claim("roles", authorities.stream().map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
                 .setIssuedAt(new Date())
@@ -47,6 +56,16 @@ public class JwtTokenProvider {
                 .compact();
         return token;
     }
+
+    public Integer getUserIdFromAuthentication(Authentication authentication) {
+        // Giả sử bạn có một dịch vụ người dùng để tìm userId từ username
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        return user.getId();  // Trả về userId nếu người dùng tồn tại
+
+    }
+
 
     public String getUsername(String token) {
         Claims claims = Jwts.parserBuilder()
