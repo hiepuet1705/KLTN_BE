@@ -6,11 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
+@Document(indexName = "posts")
 public class PostWithPropertyDTO {
     private Integer postId;
     private String postTitle;

@@ -12,6 +12,8 @@ import java.util.List;
 public interface PostService {
     List<PostDTO> getAllPosts();
 
+    List<PostDTO> getPostByUserId(Integer userId);
+
     PostDTO getPostById(Integer postId);
 
     PostDTO createPost(PostDTO postDTO);

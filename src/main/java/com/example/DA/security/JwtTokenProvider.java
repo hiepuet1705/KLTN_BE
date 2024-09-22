@@ -60,8 +60,9 @@ public class JwtTokenProvider {
     public Integer getUserIdFromAuthentication(Authentication authentication) {
         // Giả sử bạn có một dịch vụ người dùng để tìm userId từ username
         String username = authentication.getName();
-        User user = userRepository.findByUsername(username).orElse(null);
-
+        System.out.println(username);
+        User user = userRepository.findByUsernameOrEmail(username, username).orElse(null);
+        System.out.println(user);
         return user.getId();  // Trả về userId nếu người dùng tồn tại
 
     }

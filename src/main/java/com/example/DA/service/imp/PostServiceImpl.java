@@ -52,6 +52,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostDTO> getPostByUserId(Integer userId) {
+        List<Post> posts = postRepository.findByUserId(userId);
+        // Convert Post entities to PostDTOs
+        return posts.stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    @Override
     public PostDTO getPostById(Integer postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         return optionalPost.map(this::convertToDTO).orElse(null);
