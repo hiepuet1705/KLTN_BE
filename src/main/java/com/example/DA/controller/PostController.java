@@ -28,6 +28,11 @@ public class PostController {
         return postService.getPostWithProperty(id);
     }
 
+    @GetMapping
+    public List<PostWithPropertyDTO> getAllPosts() {
+        return postService.getAllPosts();
+    }
+
     @GetMapping("/search")
     public Page<PostWithPropertyDTO> searchPosts(@RequestBody PostSearchCriteria criteria, @PageableDefault(size = 10, page = 0) Pageable pageable) {
         return postService.searchPost(criteria, pageable);
