@@ -81,6 +81,13 @@ public class PropertyServiceImpl implements PropertyService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<PropertyDTO> getPropertiesByUserId(Integer userId) {
+        return propertyRepository.findPropertiesByOwnerId(userId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<Utility> getNearbyUtilities(Integer propertyId) {
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new RuntimeException("Property not found"));

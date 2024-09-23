@@ -24,6 +24,11 @@ public class PropertyController {
         return ResponseEntity.ok(savedProperty);
     }
 
+    @GetMapping("/user/{userId}")
+    public List<PropertyDTO> getPropertiesByUserId(@PathVariable Integer userId) {
+        return propertyService.getPropertiesByUserId(userId);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<PropertyDTO> updateProperty(@PathVariable("id") Integer propertyId, @RequestBody PropertyDTO propertyDTO) {
         PropertyDTO updatedProperty = propertyService.updatePropertyById(propertyId, propertyDTO);
