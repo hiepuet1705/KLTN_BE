@@ -4,17 +4,17 @@ import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.dto.PostWithPropertyDTO;
 import com.example.DA.dto.PropertyDTO;
-import com.example.DA.exception.ApiException;
+
 import com.example.DA.model.Post;
 import com.example.DA.model.Property;
 import com.example.DA.repo.*;
 import com.example.DA.service.PostService;
-import com.example.DA.service.PropertyService;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -176,6 +176,31 @@ public class PostServiceImpl implements PostService {
         );
 
         return postDTO;
+    }
+
+    @Override
+    public List<PostDTO> getPostsByStatus(String status) {
+        List<Post> posts = postRepository.findByStatus(status);
+        return posts.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDTO updatePostStatus(Integer postId, String status) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postId));
+
+        // Validate the new status
+        if (!status.matches("pending|approved|rejected")) {
+            throw new IllegalArgumentException("Invalid status. Status must be 'pending', 'approved', or 'rejected'.");
+        }
+
+        // Update status
+        post.setStatus(status);
+        postRepository.save(post);
+
+        return convertToDTO(post);
     }
 
 

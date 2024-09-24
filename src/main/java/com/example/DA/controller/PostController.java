@@ -3,8 +3,10 @@ package com.example.DA.controller;
 import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.dto.PostWithPropertyDTO;
+import com.example.DA.dto.UpdatePostStatusDTO;
 import com.example.DA.model.Post;
 import com.example.DA.service.PostService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +47,27 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<List<PostDTO>> getPostsByStatus(@RequestParam(name = "status", required = false, defaultValue = "pending") String status) {
+        List<PostDTO> posts = postService.getPostsByStatus(status);
+        if (posts.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @PutMapping("/{postId}/status")
+    public ResponseEntity<PostDTO> updatePostStatus(@PathVariable Integer postId, @RequestBody UpdatePostStatusDTO updatePostStatusDTO) {
+        try {
+            PostDTO updatedPost = postService.updatePostStatus(postId, updatePostStatusDTO.getStatus());
+            return new ResponseEntity<>(updatedPost, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping

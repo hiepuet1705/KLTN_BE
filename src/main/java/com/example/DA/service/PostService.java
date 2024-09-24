@@ -27,4 +27,8 @@ public interface PostService {
     public List<PostDTO> getFavoritePost(Integer userId);
 
     public PostWithPropertyDTO getPostWithProperty(Integer postId);
+
+    public List<PostDTO> getPostsByStatus(String status);
+
+    public PostDTO updatePostStatus(Integer postId, String status);
 }

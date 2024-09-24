@@ -13,6 +13,8 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
+    List<Post> findByStatus(String status);
+
     @Query("SELECT p \n" +
             "FROM Post p \n" +
             "JOIN p.property prop \n" +
