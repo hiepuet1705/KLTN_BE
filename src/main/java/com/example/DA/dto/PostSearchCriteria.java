@@ -14,7 +14,7 @@ public class PostSearchCriteria {
     private String province;
     private Integer minPrice;
     private Integer maxPrice;
-    private String status;
+    private String postType;
     private Double minArea;
     private Double maxArea;
 }

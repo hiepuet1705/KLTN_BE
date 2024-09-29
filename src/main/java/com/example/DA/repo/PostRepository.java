@@ -23,7 +23,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "    (:province IS NULL OR prop.province.id = :province) AND\n" +
             "    (:minPrice IS NULL OR prop.price >= :minPrice) AND\n" +
             "    (:maxPrice IS NULL OR prop.price <= :maxPrice) AND\n" +
-            "    (:status IS NULL OR p.status = :status) AND\n" +
+            "    (:status IS NULL OR p.postType = :postType) AND\n" +
             "    (:minArea IS NULL OR prop.area >= :minArea) AND\n" +
             "    (:maxArea IS NULL OR prop.area <= :maxArea)\n" +
             "ORDER BY p.charged DESC, prop.price ASC\n")
@@ -32,7 +32,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             @Param("province") Integer province,
             @Param("minPrice") Integer minPrice,
             @Param("maxPrice") Integer maxPrice,
-            @Param("status") String status,
+            @Param("postType") String postType,
             @Param("minArea") Double minArea,
             @Param("maxArea") Double maxArea,
             Pageable pageable);

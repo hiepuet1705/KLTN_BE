@@ -102,7 +102,7 @@ public class PostServiceImpl implements PostService {
                 provinceId,
                 criteria.getMinPrice(),
                 criteria.getMaxPrice(),
-                criteria.getStatus(),
+                criteria.getPostType(),
                 criteria.getMinArea(),
                 criteria.getMaxArea(),
                 pageable);
