@@ -19,16 +19,16 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "FROM Post p \n" +
             "JOIN p.property prop \n" +
             "WHERE \n" +
-            "    (:district IS NULL OR prop.district = :district) AND\n" +
+            "    (:district IS NULL OR prop.district.id = :district) AND\n" +
             "    (:province IS NULL OR prop.province.id = :province) AND\n" +
-            "    (:minPrice IS NULL OR prop.price >= :minPrice) AND\n" +
-            "    (:maxPrice IS NULL OR prop.price <= :maxPrice) AND\n" +
-            "    (:status IS NULL OR p.postType = :postType) AND\n" +
+            "    (:minPrice IS NULL OR p.price >= :minPrice) AND\n" +
+            "    (:maxPrice IS NULL OR p.price <= :maxPrice) AND\n" +
+            "    (:postType IS NULL OR p.postType = :postType) AND\n" +
             "    (:minArea IS NULL OR prop.area >= :minArea) AND\n" +
             "    (:maxArea IS NULL OR prop.area <= :maxArea)\n" +
             "ORDER BY p.charged DESC, prop.price ASC\n")
     Page<Post> searchPosts(
-            @Param("district") String district,
+            @Param("district") Integer district,
             @Param("province") Integer province,
             @Param("minPrice") Integer minPrice,
             @Param("maxPrice") Integer maxPrice,

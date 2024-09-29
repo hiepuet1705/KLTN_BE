@@ -7,6 +7,8 @@ import com.example.DA.dto.PropertyDTO;
 
 import com.example.DA.model.Post;
 import com.example.DA.model.Property;
+import com.example.DA.model.enums_entity.District;
+import com.example.DA.model.enums_entity.Province;
 import com.example.DA.repo.*;
 import com.example.DA.service.PostService;
 
@@ -39,6 +41,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private ProvinceRepository provinceRepository;
+
+    @Autowired
+    private DistrictRepository districtRepository;
 
     @Autowired
     private PropertyServiceImpl propertyService;
@@ -95,10 +100,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostWithPropertyDTO> searchPost(PostSearchCriteria criteria, Pageable pageable) {
         String province = criteria.getProvince();
-        System.out.println(province);
-        Integer provinceId = provinceRepository.findByName(province).getId();
+        Integer provinceId = Optional.ofNullable(provinceRepository.findByName(province))
+                .map(Province::getId)
+                .orElse(null);
+
+        Integer districtId = Optional.ofNullable(districtRepository.findByName(criteria.getDistrict()))
+                .map(District::getId)
+                .orElse(null);
+
         Page<Post> posts = postRepository.searchPosts(
-                criteria.getDistrict(),
+                districtId,
                 provinceId,
                 criteria.getMinPrice(),
                 criteria.getMaxPrice(),

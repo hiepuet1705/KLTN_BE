@@ -61,7 +61,7 @@ public class PropertyServiceImpl implements PropertyService {
         property.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
 
         property.setPhuong(phuongRepository.findByName(dto.getPhuong()).orElse(null));
-        property.setDistrict(districtRepository.findByName(dto.getDistrict()).orElse(null));
+        property.setDistrict(districtRepository.findByName(dto.getDistrict()));
         property.setProvince(provinceRepository.findByName(dto.getProvince()));
         Property savedProperty = propertyRepository.save(property);
         return convertToDTO(savedProperty);
