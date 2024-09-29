@@ -1,7 +1,6 @@
 package com.example.DA.model;
 
-import com.example.DA.model.enums.PostStatus;
-import com.example.DA.model.enums.PostType;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
