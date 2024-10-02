@@ -64,40 +64,40 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getPostByUserId(Integer userId) {
+    public List<PostWithPropertyDTO> getPostByUserId(Integer userId) {
         List<Post> posts = postRepository.findByUserId(userId);
         // Convert Post entities to PostDTOs
         return posts.stream()
-                .map(this::convertToDTO)
+                .map(this::convertToPostWithPropertyDTO)
                 .toList();
     }
 
     @Override
-    public PostDTO getPostById(Integer postId) {
+    public PostWithPropertyDTO getPostById(Integer postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
-        return optionalPost.map(this::convertToDTO).orElse(null);
+        return optionalPost.map(this::convertToPostWithPropertyDTO).orElse(null);
     }
 
     @Override
-    public PostDTO createPost(PostDTO postDTO) {
+    public PostWithPropertyDTO createPost(PostDTO postDTO) {
         Post post = convertToEntity(postDTO);
         post = postRepository.save(post);
-        return convertToDTO(post);
+        return convertToPostWithPropertyDTO(post);
     }
 
-    @Override
-    public PostDTO updatePost(Integer postId, PostDTO postDTO) {
-        Optional<Post> optionalPost = postRepository.findById(postId);
-        if (optionalPost.isPresent()) {
-            Post post = optionalPost.get();
-            modelMapper.map(postDTO, post);
-            post.setProperty(propertyRepository.findById(postDTO.getPropertyId()).orElse(null));
-            post.setUser(userRepository.findById(postDTO.getUserId()).orElse(null));
-            post = postRepository.save(post);
-            return convertToDTO(post);
-        }
-        return null;
-    }
+//    @Override
+//    public PostDTO updatePost(Integer postId, PostDTO postDTO) {
+//        Optional<Post> optionalPost = postRepository.findById(postId);
+//        if (optionalPost.isPresent()) {
+//            Post post = optionalPost.get();
+//            modelMapper.map(postDTO, post);
+//            post.setProperty(propertyRepository.findById(postDTO.getPropertyId()).orElse(null));
+//            post.setUser(userRepository.findById(postDTO.getUserId()).orElse(null));
+//            post = postRepository.save(post);
+//            return convertToDTO(post);
+//        }
+//        return null;
+//    }
 
     @Override
     public void deletePost(Integer postId) {
@@ -151,70 +151,36 @@ public class PostServiceImpl implements PostService {
         return dto;
     }
 
-    @Override
-    public List<PostDTO> getFavoritePost(Integer userId) {
-
-        List<Post> posts = postRepository.findAll();
-        return posts.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-
-    }
+//    @Override
+//    public List<PostDTO> getFavoritePost(Integer userId) {
+//
+//        List<Post> posts = postRepository.findAll();
+//
+//
+//
+//    }
 
     @Override
     public PostWithPropertyDTO getPostWithProperty(Integer postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
-        Property property = post.getProperty();
-        List<String> images = property.getImages().stream()
-                .map(PropertyImage::getImageUrl)
-                .toList();
-        PropertyDTOResponse propertyDTO = new PropertyDTOResponse(
-                property.getPropertyId(),
-                property.getStatus().getStatusId(),
-                property.getOwner().getId(),
-                property.getTitle(),
-                property.getDescription(),
-                property.getPrice(),
-                property.getCategory().getCategoryId(),
-                property.getLocation(),         // Thêm location
-                property.getPhuong().getName(),           // Thêm phuong
-                property.getDistrict().getName(),         // Thêm district
-                property.getProvince().getName(),         // Thêm province
-                property.getArea(),             // Thêm area
-                property.getSophong(),          // Thêm số phòng
-                property.getSoTang(),           // Thêm số tầng
-                property.getSoToilet(),         // Thêm số toilet
-                property.getLat(),              // Thêm tọa độ lat
-                property.getLon(),              // Thêm tọa độ lon
-                property.getAge(),
-                images
-        );
-        PostWithPropertyDTO postDTO = new PostWithPropertyDTO(
-                post.getPostId(),
-                post.getPostTitle(),
-                post.getPostContent(),
-                post.getCharged(),
-                post.getPrice(),
-                post.getStatus(),
-                post.getPostType(),
-                propertyDTO,  // Đưa PropertyDTO vào PostDTO
-                post.getUser().getId()
-        );
+        PostWithPropertyDTO postDTO = convertToPostWithPropertyDTO(post);
+
 
         return postDTO;
     }
 
+
     @Override
-    public List<PostDTO> getPostsByStatus(String status) {
+    public List<PostWithPropertyDTO> getPostsByStatus(String status) {
         List<Post> posts = postRepository.findByStatus(status);
         return posts.stream()
-                .map(this::convertToDTO)
+                .map(this::convertToPostWithPropertyDTO)
                 .collect(Collectors.toList());
+
     }
 
     @Override
-    public PostDTO updatePostStatus(Integer postId, String status) {
+    public PostWithPropertyDTO updatePostStatus(Integer postId, String status) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postId));
 
@@ -227,13 +193,9 @@ public class PostServiceImpl implements PostService {
         post.setStatus(status);
         postRepository.save(post);
 
-        return convertToDTO(post);
+        return convertToPostWithPropertyDTO(post);
     }
 
-
-    private PostDTO convertToDTO(Post post) {
-        return modelMapper.map(post, PostDTO.class);
-    }
 
     private Post convertToEntity(PostDTO postDTO) {
         Post post = modelMapper.map(postDTO, Post.class);

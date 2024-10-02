@@ -27,6 +27,14 @@ public class PropertyController {
         return ResponseEntity.ok(savedProperty);
     }
 
+//    @PostMapping
+//    @PreAuthorize("hasRole('USER')")
+//    public ResponseEntity<PropertyDTOResponse> createPropertyWithImage(@RequestBody PropertyDTORequest propertyDTO) {
+//
+//        PropertyDTOResponse savedProperty = propertyService.saveProperty(propertyDTO);
+//        return ResponseEntity.ok(savedProperty);
+//    }
+
     @PostMapping("/{propertyId}/images")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> uploadImage(@PathVariable Integer propertyId,

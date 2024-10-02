@@ -111,16 +111,6 @@ public class PropertyServiceImpl implements PropertyService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public PropertyDTO updatePropertyById(Integer propertyId, PropertyDTO propertyDTO) {
-//        // Lấy property từ database hoặc ném ngoại lệ nếu không tìm thấy
-//        Property property = propertyRepository.findById(propertyId)
-//                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "Property not found"));
-//        modelMapper.map(propertyDTO, property);
-//        Property updatedProperty = propertyRepository.save(property);
-//        return convertToDTO(updatedProperty);
-//    }
-
 
     @Override
     public void deleteProperty(Integer propertyId) {

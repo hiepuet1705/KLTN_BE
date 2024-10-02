@@ -12,23 +12,23 @@ import java.util.List;
 public interface PostService {
     List<PostWithPropertyDTO> getAllPosts();
 
-    List<PostDTO> getPostByUserId(Integer userId);
+    List<PostWithPropertyDTO> getPostByUserId(Integer userId);
 
-    PostDTO getPostById(Integer postId);
+    PostWithPropertyDTO getPostById(Integer postId);
 
-    PostDTO createPost(PostDTO postDTO);
+    PostWithPropertyDTO createPost(PostDTO postDTO);
 
-    PostDTO updatePost(Integer postId, PostDTO postDTO);
+//    PostDTO updatePost(Integer postId, PostDTO postDTO);
 
     void deletePost(Integer postId);
 
     public Page<PostWithPropertyDTO> searchPost(PostSearchCriteria postSearchCriteria, Pageable pageable);
 
-    public List<PostDTO> getFavoritePost(Integer userId);
+//    public List<PostDTO> getFavoritePost(Integer userId);
 
     public PostWithPropertyDTO getPostWithProperty(Integer postId);
 
-    public List<PostDTO> getPostsByStatus(String status);
+    public List<PostWithPropertyDTO> getPostsByStatus(String status);
 
-    public PostDTO updatePostStatus(Integer postId, String status);
+    public PostWithPropertyDTO updatePostStatus(Integer postId, String status);
 }

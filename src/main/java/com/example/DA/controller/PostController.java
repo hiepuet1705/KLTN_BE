@@ -41,9 +41,10 @@ public class PostController {
         return postService.searchPost(criteria, pageable);
     }
 
+
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostDTO>> getPostsByUserId(@PathVariable Integer userId) {
-        List<PostDTO> posts = postService.getPostByUserId(userId);
+    public ResponseEntity<List<PostWithPropertyDTO>> getPostsByUserId(@PathVariable Integer userId) {
+        List<PostWithPropertyDTO> posts = postService.getPostByUserId(userId);
         if (posts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -51,8 +52,8 @@ public class PostController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<List<PostDTO>> getPostsByStatus(@RequestParam(name = "status", required = false, defaultValue = "pending") String status) {
-        List<PostDTO> posts = postService.getPostsByStatus(status);
+    public ResponseEntity<List<PostWithPropertyDTO>> getPostsByStatus(@RequestParam(name = "status", required = false, defaultValue = "pending") String status) {
+        List<PostWithPropertyDTO> posts = postService.getPostsByStatus(status);
         if (posts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -60,9 +61,9 @@ public class PostController {
     }
 
     @PutMapping("/{postId}/status")
-    public ResponseEntity<PostDTO> updatePostStatus(@PathVariable Integer postId, @RequestBody UpdatePostStatusDTO updatePostStatusDTO) {
+    public ResponseEntity<PostWithPropertyDTO> updatePostStatus(@PathVariable Integer postId, @RequestBody UpdatePostStatusDTO updatePostStatusDTO) {
         try {
-            PostDTO updatedPost = postService.updatePostStatus(postId, updatePostStatusDTO.getStatus());
+            PostWithPropertyDTO updatedPost = postService.updatePostStatus(postId, updatePostStatusDTO.getStatus());
             return new ResponseEntity<>(updatedPost, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -73,15 +74,15 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public PostDTO createPost(@RequestBody PostDTO postDTO) {
+    public PostWithPropertyDTO createPost(@RequestBody PostDTO postDTO) {
         return postService.createPost(postDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PostDTO> updatePost(@PathVariable Integer id, @RequestBody PostDTO postDTO) {
-        PostDTO updatedPost = postService.updatePost(id, postDTO);
-        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<PostDTO> updatePost(@PathVariable Integer id, @RequestBody PostDTO postDTO) {
+//        PostDTO updatedPost = postService.updatePost(id, postDTO);
+//        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Integer id) {
