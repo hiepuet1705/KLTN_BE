@@ -17,4 +17,5 @@ public class PostSearchCriteria {
     private String postType;
     private Double minArea;
     private Double maxArea;
+    private String propertyType;
 }

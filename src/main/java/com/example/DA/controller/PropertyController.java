@@ -1,12 +1,14 @@
 package com.example.DA.controller;
 
 
-import com.example.DA.dto.PropertyDTO;
+import com.example.DA.dto.PropertyDTORequest;
+import com.example.DA.dto.PropertyDTOResponse;
 import com.example.DA.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,26 +21,40 @@ public class PropertyController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<PropertyDTO> createProperty(@RequestBody PropertyDTO propertyDTO) {
-        PropertyDTO savedProperty = propertyService.saveProperty(propertyDTO);
+    public ResponseEntity<PropertyDTOResponse> createProperty(@RequestBody PropertyDTORequest propertyDTO) {
+
+        PropertyDTOResponse savedProperty = propertyService.saveProperty(propertyDTO);
         return ResponseEntity.ok(savedProperty);
     }
 
+    @PostMapping("/{propertyId}/images")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<String> uploadImage(@PathVariable Integer propertyId,
+                                              @RequestParam("images") MultipartFile[] files) {
+
+        try {
+            propertyService.uploadPropertyImages(propertyId, files);
+            return ResponseEntity.ok("Upload thanh cong");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error uploading images: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/user/{userId}")
-    public List<PropertyDTO> getPropertiesByUserId(@PathVariable Integer userId) {
+    public List<PropertyDTOResponse> getPropertiesByUserId(@PathVariable Integer userId) {
         return propertyService.getPropertiesByUserId(userId);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PropertyDTO> updateProperty(@PathVariable("id") Integer propertyId, @RequestBody PropertyDTO propertyDTO) {
-        PropertyDTO updatedProperty = propertyService.updatePropertyById(propertyId, propertyDTO);
-        return ResponseEntity.ok(updatedProperty);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<PropertyDTORequest> updateProperty(@PathVariable("id") Integer propertyId, @RequestBody PropertyDTO propertyDTO) {
+//        PropertyDTORequest updatedProperty = propertyService.updatePropertyById(propertyId, propertyDTO);
+//        return ResponseEntity.ok(updatedProperty);
+//    }
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<PropertyDTO>> getAllProperty() {
-        List<PropertyDTO> properties = propertyService.getAllProperties();
+    public ResponseEntity<List<PropertyDTOResponse>> getAllProperty() {
+        List<PropertyDTOResponse> properties = propertyService.getAllProperties();
         return ResponseEntity.ok(properties);
     }
 

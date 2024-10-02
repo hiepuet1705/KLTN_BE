@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
+import java.util.List;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PropertyDTO {
+public class PropertyDTOResponse {
     private Integer propertyId;
     private Integer statusId;
     private Integer ownerId;
@@ -31,6 +30,5 @@ public class PropertyDTO {
     private Double lat;
     private Double lon;
     private Integer age;
-
+    private List<String> images;
 }
-

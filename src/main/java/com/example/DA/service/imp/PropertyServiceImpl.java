@@ -1,22 +1,25 @@
 package com.example.DA.service.imp;
 
-import com.example.DA.dto.PropertyDTO;
+
 import com.example.DA.dto.PostSearchCriteria;
+import com.example.DA.dto.PropertyDTORequest;
+import com.example.DA.dto.PropertyDTOResponse;
 import com.example.DA.exception.ApiException;
 import com.example.DA.model.Property;
+import com.example.DA.model.PropertyImage;
 import com.example.DA.model.Utility;
 import com.example.DA.repo.*;
 import com.example.DA.service.DistanceService;
 import com.example.DA.service.PropertyService;
+import com.example.DA.service.S3Service;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,9 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Autowired
     private PropertyStatusRepository statusRepository;
+
+    @Autowired
+    private PropertyImageRepository propertyImageRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -50,12 +56,14 @@ public class PropertyServiceImpl implements PropertyService {
     private ModelMapper modelMapper;
 
     @Autowired
+    private S3Service s3Service;
+
+    @Autowired
     DistanceService distanceService;
 
     @Override
-    public PropertyDTO saveProperty(PropertyDTO dto) {
-        Property property = convertToEntity(dto);
-
+    public PropertyDTOResponse saveProperty(PropertyDTORequest dto) {
+        Property property = convertToEntityFromRequest(dto);
         property.setStatus(statusRepository.findById(dto.getStatusId()).orElse(null));
         property.setOwner(userRepository.findById(dto.getOwnerId()).orElse(null));
         property.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
@@ -68,21 +76,21 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public PropertyDTO getPropertyById(Integer propertyId) {
+    public PropertyDTOResponse getPropertyById(Integer propertyId) {
         Property property = propertyRepository.findById(propertyId).orElseThrow(() ->
                 new RuntimeException("property with " + propertyId + " not found"));
         return property != null ? convertToDTO(property) : null;
     }
 
     @Override
-    public List<PropertyDTO> getAllProperties() {
+    public List<PropertyDTOResponse> getAllProperties() {
         return propertyRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<PropertyDTO> getPropertiesByUserId(Integer userId) {
+    public List<PropertyDTOResponse> getPropertiesByUserId(Integer userId) {
         return propertyRepository.findPropertiesByOwnerId(userId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -103,15 +111,15 @@ public class PropertyServiceImpl implements PropertyService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public PropertyDTO updatePropertyById(Integer propertyId, PropertyDTO propertyDTO) {
-        // Lấy property từ database hoặc ném ngoại lệ nếu không tìm thấy
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "Property not found"));
-        modelMapper.map(propertyDTO, property);
-        Property updatedProperty = propertyRepository.save(property);
-        return convertToDTO(updatedProperty);
-    }
+//    @Override
+//    public PropertyDTO updatePropertyById(Integer propertyId, PropertyDTO propertyDTO) {
+//        // Lấy property từ database hoặc ném ngoại lệ nếu không tìm thấy
+//        Property property = propertyRepository.findById(propertyId)
+//                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "Property not found"));
+//        modelMapper.map(propertyDTO, property);
+//        Property updatedProperty = propertyRepository.save(property);
+//        return convertToDTO(updatedProperty);
+//    }
 
 
     @Override
@@ -119,18 +127,50 @@ public class PropertyServiceImpl implements PropertyService {
         propertyRepository.deleteById(propertyId);
     }
 
+    @Override
+    public List<String> uploadPropertyImages(Integer propertyId, MultipartFile[] files) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
 
-    public PropertyDTO convertToDTO(Property property) {
-        PropertyDTO dto = modelMapper.map(property, PropertyDTO.class);
+        List<String> imageUrls = new ArrayList<>();
+        for (MultipartFile file : files) {
+            try {
+                // Upload file lên S3
+                String imageUrl = s3Service.uploadFile(propertyId.toString(), file);
+                // Tạo đối tượng PropertyImage để lưu thông tin vào CSDL
+                PropertyImage propertyImage = new PropertyImage(property, imageUrl);
+                propertyImageRepository.save(propertyImage);
+                property.getImages().add(propertyImage);
+
+
+                imageUrls.add(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image: " + e.getMessage());
+            }
+        }
+        // Lưu property sau khi đã thêm danh sách ảnh
+        propertyRepository.save(property);
+        return imageUrls;
+    }
+
+
+    public PropertyDTOResponse convertToDTO(Property property) {
+        PropertyDTOResponse dto = modelMapper.map(property, PropertyDTOResponse.class);
         dto.setPhuong(property.getPhuong().getName());
         dto.setDistrict(property.getDistrict().getName());
         dto.setProvince(property.getProvince().getName());
+        dto.setImages(property.getImages().stream().map(PropertyImage::getImageUrl).toList());
         return dto;
     }
 
-    public Property convertToEntity(PropertyDTO dto) {
-        Property property = modelMapper.map(dto, Property.class);
 
+    public Property convertToEntity(PropertyDTOResponse dto) {
+        Property property = modelMapper.map(dto, Property.class);
+        return property;
+    }
+
+    public Property convertToEntityFromRequest(PropertyDTORequest dto) {
+        Property property = modelMapper.map(dto, Property.class);
         return property;
     }
 

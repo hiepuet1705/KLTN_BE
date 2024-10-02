@@ -25,7 +25,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "    (:maxPrice IS NULL OR p.price <= :maxPrice) AND\n" +
             "    (:postType IS NULL OR p.postType = :postType) AND\n" +
             "    (:minArea IS NULL OR prop.area >= :minArea) AND\n" +
-            "    (:maxArea IS NULL OR prop.area <= :maxArea)\n" +
+            "    (:maxArea IS NULL OR prop.area <= :maxArea) AND\n" +
+            "    (:categoryId IS NULL OR prop.category.id = :categoryId)\n" +
             "ORDER BY p.charged DESC, prop.price ASC\n")
     Page<Post> searchPosts(
             @Param("district") Integer district,
@@ -35,6 +36,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             @Param("postType") String postType,
             @Param("minArea") Double minArea,
             @Param("maxArea") Double maxArea,
+            @Param("categoryId") Integer categoryId,
             Pageable pageable);
 
 

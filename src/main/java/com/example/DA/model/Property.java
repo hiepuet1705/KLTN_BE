@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -64,6 +66,9 @@ public class Property extends DateTime {
             inverseJoinColumns = @JoinColumn(name = "utility_id")
     )
     private Set<Utility> utilities;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyImage> images = new ArrayList<>();
 
 }
 

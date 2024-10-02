@@ -30,6 +30,7 @@ public class PostController {
         return postService.getPostWithProperty(id);
     }
 
+
     @GetMapping
     public List<PostWithPropertyDTO> getAllPosts() {
         return postService.getAllPosts();

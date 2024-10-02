@@ -6,13 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.elasticsearch.annotations.Document;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
-@Document(indexName = "posts")
 public class PostWithPropertyDTO {
     private Integer postId;
     private String postTitle;
@@ -21,6 +20,6 @@ public class PostWithPropertyDTO {
     private Long price;
     private String status;
     private String postType;
-    private PropertyDTO property;
+    private PropertyDTOResponse property;
     private Integer userId;
 }

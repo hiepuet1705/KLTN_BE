@@ -1,6 +1,6 @@
 package com.example.DA.repo;
 
-import com.example.DA.dto.PropertyDTO;
+
 import com.example.DA.model.Property;
 
 import org.springframework.data.domain.Page;

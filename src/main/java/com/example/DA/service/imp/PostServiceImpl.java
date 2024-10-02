@@ -3,10 +3,13 @@ package com.example.DA.service.imp;
 import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.dto.PostWithPropertyDTO;
-import com.example.DA.dto.PropertyDTO;
 
+
+import com.example.DA.dto.PropertyDTOResponse;
 import com.example.DA.model.Post;
 import com.example.DA.model.Property;
+import com.example.DA.model.PropertyImage;
+import com.example.DA.model.enums_entity.Category;
 import com.example.DA.model.enums_entity.District;
 import com.example.DA.model.enums_entity.Province;
 import com.example.DA.repo.*;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +39,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -108,6 +115,10 @@ public class PostServiceImpl implements PostService {
                 .map(District::getId)
                 .orElse(null);
 
+        Integer categoryId = Optional.ofNullable(categoryRepository.findByName(criteria.getPropertyType()))
+                .map(Category::getCategoryId)
+                .orElse(null);
+
         Page<Post> posts = postRepository.searchPosts(
                 districtId,
                 provinceId,
@@ -116,6 +127,7 @@ public class PostServiceImpl implements PostService {
                 criteria.getPostType(),
                 criteria.getMinArea(),
                 criteria.getMaxArea(),
+                categoryId,
                 pageable);
 
         return posts.map(this::convertToPostWithPropertyDTO);
@@ -132,7 +144,7 @@ public class PostServiceImpl implements PostService {
         dto.setStatus(post.getStatus());
         dto.setPostType(post.getPostType());
 
-        PropertyDTO propertyDTO = propertyService.convertToDTO(post.getProperty());
+        PropertyDTOResponse propertyDTO = propertyService.convertToDTO(post.getProperty());
         dto.setProperty(propertyDTO);
         dto.setUserId(post.getUser().getId());
 
@@ -154,7 +166,10 @@ public class PostServiceImpl implements PostService {
     public PostWithPropertyDTO getPostWithProperty(Integer postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
         Property property = post.getProperty();
-        PropertyDTO propertyDTO = new PropertyDTO(
+        List<String> images = property.getImages().stream()
+                .map(PropertyImage::getImageUrl)
+                .toList();
+        PropertyDTOResponse propertyDTO = new PropertyDTOResponse(
                 property.getPropertyId(),
                 property.getStatus().getStatusId(),
                 property.getOwner().getId(),
@@ -172,7 +187,8 @@ public class PostServiceImpl implements PostService {
                 property.getSoToilet(),         // Thêm số toilet
                 property.getLat(),              // Thêm tọa độ lat
                 property.getLon(),              // Thêm tọa độ lon
-                property.getAge()               // Thêm tuổi của bất động sản
+                property.getAge(),
+                images
         );
         PostWithPropertyDTO postDTO = new PostWithPropertyDTO(
                 post.getPostId(),
