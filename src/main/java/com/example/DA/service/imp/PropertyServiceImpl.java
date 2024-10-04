@@ -10,6 +10,7 @@ import com.example.DA.model.PropertyImage;
 import com.example.DA.model.Utility;
 import com.example.DA.repo.*;
 import com.example.DA.service.DistanceService;
+import com.example.DA.service.GeoCodingService;
 import com.example.DA.service.PropertyService;
 import com.example.DA.service.S3Service;
 import org.modelmapper.ModelMapper;
@@ -60,6 +61,31 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Autowired
     DistanceService distanceService;
+    @Autowired
+    private GeoCodingService geoCodingService;
+
+
+    public String updateCoordinates(Integer propertyId) {
+        // Tìm kiếm Property dựa trên PropertyId
+        Property property = propertyRepository.findById(propertyId).orElseThrow(() ->
+                new RuntimeException("property with " + propertyId + " not found"));
+
+
+        String location = property.getLocation();
+        String phuong = property.getPhuong() != null ? property.getPhuong().getName() : null;
+        String district = property.getDistrict() != null ? property.getDistrict().getName() : null;
+        String province = property.getProvince() != null ? property.getProvince().getName() : null;
+
+        // Lấy tọa độ từ địa chỉ đầy đủ
+        Double[] coordinates = geoCodingService.getLatLonFromAddress(location, phuong, district, province);
+        if (coordinates != null) {
+            property.setLat(coordinates[0]);
+            property.setLon(coordinates[1]);
+        }
+        propertyRepository.save(property);
+        return "Update Lat and Long with property  " + propertyId;
+
+    }
 
     @Override
     public PropertyDTOResponse saveProperty(PropertyDTORequest dto) {
