@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface PhuongService {
     List<Phuong> getAllPhuong();
+
+    Phuong findByNameContaining(String name);
 }

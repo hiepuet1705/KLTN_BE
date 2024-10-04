@@ -107,11 +107,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostWithPropertyDTO> searchPost(PostSearchCriteria criteria, Pageable pageable) {
         String province = criteria.getProvince();
-        Integer provinceId = Optional.ofNullable(provinceRepository.findByName(province))
+        Integer provinceId = Optional.ofNullable(provinceRepository.findByName(province).get(0))
                 .map(Province::getId)
                 .orElse(null);
 
-        Integer districtId = Optional.ofNullable(districtRepository.findByName(criteria.getDistrict()))
+        Integer districtId = Optional.ofNullable(districtRepository.findByName(criteria.getDistrict()).get(0))
                 .map(District::getId)
                 .orElse(null);
 
