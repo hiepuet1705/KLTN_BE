@@ -107,6 +107,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostWithPropertyDTO> searchPost(PostSearchCriteria criteria, Pageable pageable) {
         String province = criteria.getProvince();
+
         Integer provinceId = Optional.ofNullable(provinceRepository.findByName(province))
                 .filter(provinces -> !provinces.isEmpty()) // Kiểm tra nếu mảng không rỗng
                 .map(provinces -> provinces.get(0).getId()) // Lấy giá trị đầu tiên
@@ -114,8 +115,8 @@ public class PostServiceImpl implements PostService {
 
         Integer districtId = Optional.ofNullable(districtRepository.findByName(criteria.getDistrict()))
                 .filter(districts -> !districts.isEmpty()) // Kiểm tra nếu mảng không rỗng
-                .map(districts -> districts.get(0).getId()) // Lấy giá trị đầu tiên
-                .orElse(null);
+                .map(districts -> districts.get(0).getId())
+                .orElse(null);// Lấy giá trị đầu tiên
 
 
         Integer categoryId = Optional.ofNullable(categoryRepository.findByName(criteria.getPropertyType()))
