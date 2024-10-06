@@ -22,4 +22,9 @@ public class PhuongServiceImpl implements PhuongService {
     public List<Phuong> getAllPhuong() {
         return phuongRepository.findAll();
     }
+
+    @Override
+    public Phuong findByNameContaining(String name) {
+        return phuongRepository.findByName(name).get(0);
+    }
 }

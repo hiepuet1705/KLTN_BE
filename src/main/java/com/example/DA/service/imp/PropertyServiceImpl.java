@@ -94,9 +94,9 @@ public class PropertyServiceImpl implements PropertyService {
         property.setOwner(userRepository.findById(dto.getOwnerId()).orElse(null));
         property.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
 
-        property.setPhuong(phuongRepository.findByName(dto.getPhuong()).orElse(null));
-        property.setDistrict(districtRepository.findByName(dto.getDistrict()));
-        property.setProvince(provinceRepository.findByName(dto.getProvince()));
+        property.setPhuong(phuongRepository.findByName(dto.getPhuong()).get(0));
+        property.setDistrict(districtRepository.findByName(dto.getDistrict()).get(0));
+        property.setProvince(provinceRepository.findByName(dto.getProvince()).get(0));
         Property savedProperty = propertyRepository.save(property);
         return convertToDTO(savedProperty);
     }

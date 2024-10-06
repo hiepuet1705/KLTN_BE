@@ -26,6 +26,6 @@ public class PhuongController {
     public ResponseEntity<List<Phuong>> getAllProvinces() {
         List<Phuong> response = phuongService.getAllPhuong();
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
+    
 }
