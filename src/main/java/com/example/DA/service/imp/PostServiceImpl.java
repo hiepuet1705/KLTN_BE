@@ -6,12 +6,11 @@ import com.example.DA.dto.PostWithPropertyDTO;
 
 
 import com.example.DA.dto.PropertyDTOResponse;
+import com.example.DA.model.FavoriteList;
 import com.example.DA.model.Post;
-import com.example.DA.model.Property;
-import com.example.DA.model.PropertyImage;
+
 import com.example.DA.model.enums_entity.Category;
-import com.example.DA.model.enums_entity.District;
-import com.example.DA.model.enums_entity.Province;
+
 import com.example.DA.repo.*;
 import com.example.DA.service.PostService;
 
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,6 +51,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private DistrictRepository districtRepository;
+
+    @Autowired
+    private FavoriteListRepository favoriteListRepository;
 
     @Autowired
     private PropertyServiceImpl propertyService;
@@ -181,6 +184,24 @@ public class PostServiceImpl implements PostService {
                 .map(this::convertToPostWithPropertyDTO)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public List<PostWithPropertyDTO> getFavouritePosts(Integer userId) {
+        List<FavoriteList> favorites = favoriteListRepository.findByUser_UserId(userId);
+        List<PostWithPropertyDTO> favoritePosts = favorites.stream()
+                .map(favorite -> {
+                    Optional<Post> post = postRepository.findById(favorite.getPost().getPostId());
+
+                    // Chỉ chuyển đổi nếu post tồn tại và có status là "approved"
+                    return post.filter(p -> "approved".equalsIgnoreCase(p.getStatus()))
+                            .map(this::convertToPostWithPropertyDTO)
+                            .orElse(null);
+                })
+                .filter(Objects::nonNull)  // Loại bỏ các giá trị null
+                .collect(Collectors.toList());
+
+        return favoritePosts;
     }
 
     @Override

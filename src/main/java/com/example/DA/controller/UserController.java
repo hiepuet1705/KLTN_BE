@@ -28,4 +28,11 @@ public class UserController {
         UserDTOResponse userDTOResponse = userService.findUserByPhone(phone);
         return new ResponseEntity<>(userDTOResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/test")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<String> test() {
+
+        return new ResponseEntity<>("ooee", HttpStatus.OK);
+    }
 }

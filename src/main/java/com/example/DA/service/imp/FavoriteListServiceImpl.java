@@ -28,7 +28,7 @@ public class FavoriteListServiceImpl implements FavoriteListService {
 
 
     @Override
-    public FavoriteList addFavorite(AddFavoriteRequestDTO requestDTO) {
+    public Integer addFavorite(AddFavoriteRequestDTO requestDTO) {
         User user = userRepository.findById(requestDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
         Post post = postRepository.findById(requestDTO.getPostId()).orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -36,6 +36,8 @@ public class FavoriteListServiceImpl implements FavoriteListService {
         favoriteList.setUser(user);
         favoriteList.setPost(post);
 
-        return favoriteListRepository.save(favoriteList);
+        favoriteListRepository.save(favoriteList);
+
+        return requestDTO.getPostId();
     }
 }

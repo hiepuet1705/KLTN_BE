@@ -30,5 +30,8 @@ public interface PostService {
 
     public List<PostWithPropertyDTO> getPostsByStatus(String status);
 
+
+    public List<PostWithPropertyDTO> getFavouritePosts(Integer userId);
+
     public PostWithPropertyDTO updatePostStatus(Integer postId, String status);
 }

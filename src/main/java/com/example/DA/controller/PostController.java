@@ -30,6 +30,12 @@ public class PostController {
         return postService.getPostWithProperty(id);
     }
 
+    @GetMapping("/{userId}/favourites")
+    public ResponseEntity<List<PostWithPropertyDTO>> getFavouritePost(@PathVariable Integer userId) {
+        List<PostWithPropertyDTO> postWithPropertyDTOList = postService.getFavouritePosts(userId);
+        return new ResponseEntity<>(postWithPropertyDTOList, HttpStatus.OK);
+    }
+
 
     @GetMapping
     public List<PostWithPropertyDTO> getAllPosts() {
