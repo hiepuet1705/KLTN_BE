@@ -29,9 +29,20 @@ public class FavoriteListServiceImpl implements FavoriteListService {
 
     @Override
     public Integer addFavorite(AddFavoriteRequestDTO requestDTO) {
-        User user = userRepository.findById(requestDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-        Post post = postRepository.findById(requestDTO.getPostId()).orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = userRepository.findById(requestDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Kiểm tra Post có tồn tại không
+        Post post = postRepository.findById(requestDTO.getPostId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // Kiểm tra nếu kết hợp userId và postId đã tồn tại trong bảng FavoriteList
+        boolean exists = favoriteListRepository.existsByUserIdAndPostId(requestDTO.getUserId(), requestDTO.getPostId());
+        if (exists) {
+            throw new RuntimeException("Favorite already exists for this post and user.");
+        }
+
+        // Tạo đối tượng FavoriteList mới nếu chưa tồn tại
         FavoriteList favoriteList = new FavoriteList();
         favoriteList.setUser(user);
         favoriteList.setPost(post);

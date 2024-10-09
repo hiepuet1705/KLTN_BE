@@ -15,4 +15,8 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Inte
     @Query("SELECT fl FROM FavoriteList fl WHERE fl.user.id = :userId")
     List<FavoriteList> findByUser_UserId(@Param("userId") Integer userId);
 
+
+    @Query("SELECT CASE WHEN COUNT(fl) > 0 THEN TRUE ELSE FALSE END FROM FavoriteList fl WHERE fl.user.id = :userId AND fl.post.postId = :postId")
+    boolean existsByUserIdAndPostId(@Param("userId") Integer userId, @Param("postId") Integer postId);
+
 }
