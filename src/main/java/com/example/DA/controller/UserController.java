@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
 
@@ -34,5 +36,12 @@ public class UserController {
     public ResponseEntity<String> test() {
 
         return new ResponseEntity<>("ooee", HttpStatus.OK);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<UserDTOResponse>> getAllUser() {
+        List<UserDTOResponse> lists = userService.getAllUsers();
+        return new ResponseEntity<>(lists, HttpStatus.OK);
     }
 }

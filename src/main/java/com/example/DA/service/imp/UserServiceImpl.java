@@ -8,6 +8,9 @@ import com.example.DA.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -24,5 +27,19 @@ public class UserServiceImpl implements UserService {
         userDTOResponse.setUsername(user.getUsername());
         userDTOResponse.setEmail(user.getEmail());
         return userDTOResponse;
+    }
+
+    public List<UserDTOResponse> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> {
+                    UserDTOResponse userDTOResponse = new UserDTOResponse();
+                    userDTOResponse.setPhone(user.getPhone());
+                    userDTOResponse.setId(user.getId());
+                    userDTOResponse.setName(user.getName());
+                    userDTOResponse.setUsername(user.getUsername());
+                    userDTOResponse.setEmail(user.getEmail());
+                    return userDTOResponse;
+                }).collect(Collectors.toList());
     }
 }
