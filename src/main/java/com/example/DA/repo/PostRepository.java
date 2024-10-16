@@ -23,7 +23,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "    (:province IS NULL OR prop.province.id = :province) AND\n" +
             "    (:minPrice IS NULL OR p.price >= :minPrice) AND\n" +
             "    (:maxPrice IS NULL OR p.price <= :maxPrice) AND\n" +
-            "    (:postType IS NULL OR p.postType = :postType) AND\n" +
+            "    (:postType IS NULL OR :postType = '' OR p.postType = :postType) AND\n" +
             "    (:minArea IS NULL OR prop.area >= :minArea) AND\n" +
             "    (:maxArea IS NULL OR prop.area <= :maxArea) AND\n" +
             "    (:categoryId IS NULL OR prop.category.id = :categoryId)\n" +

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name = "Categories")
 @Getter
 @Setter
-public class Category extends DateTime {
+public class Category {
     // Loai BDS
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

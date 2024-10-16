@@ -19,7 +19,7 @@ public class PropertyDTORequest {
     private Integer ownerId;
     private String title;
     private String description;
-    private Integer price;
+    private Long price;
     private Integer categoryId;
     private String location;
     private String phuong;

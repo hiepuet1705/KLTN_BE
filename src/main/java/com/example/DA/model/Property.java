@@ -30,10 +30,12 @@ public class Property extends DateTime {
     private User owner;
 
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String description;
-    private Integer price;
+    private Long price;
     private Double area;
-    // Còn thêm nhiều trường nữa
+
+    //
     private Integer sophong;
     private Integer soTang;
     private Integer soToilet;
@@ -59,12 +61,7 @@ public class Property extends DateTime {
     @JoinColumn(name = "province_id")
     private Province province;
 
-    @ManyToMany
-    @JoinTable(
-            name = "PropertyUtilities",
-            joinColumns = @JoinColumn(name = "property_id"),
-            inverseJoinColumns = @JoinColumn(name = "utility_id")
-    )
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Utility> utilities;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)

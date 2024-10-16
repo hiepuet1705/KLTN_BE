@@ -42,7 +42,8 @@ public class Utility extends DateTime {
     @JoinColumn(name = "province_id")
     private Province province;
 
-    @ManyToMany(mappedBy = "utilities")
-    private Set<Property> properties;
+    @ManyToOne
+    @JoinColumn(name = "property_id")
+    private Property property;
 }
 
