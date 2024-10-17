@@ -32,7 +32,5 @@ public class PropertyDTORequest {
     private Double lat;
     private Double lon;
     private Integer age;
-
-
 }
 

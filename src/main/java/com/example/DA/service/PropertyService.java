@@ -27,4 +27,6 @@ public interface PropertyService {
 
     public List<String> uploadPropertyImages(Integer propertyId, MultipartFile[] files);
 
+    public PropertyDTOResponse savePropertyWithImages(PropertyDTORequest dto, MultipartFile[] files);
+
 }

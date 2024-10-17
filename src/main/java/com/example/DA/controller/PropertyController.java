@@ -27,6 +27,21 @@ public class PropertyController {
         return ResponseEntity.ok(savedProperty);
     }
 
+    @PostMapping("/properties-with-images")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> createPropertyWithImages(
+            @RequestPart("property") PropertyDTORequest propertyDTO,
+            @RequestPart("images") MultipartFile[] files) {
+
+        try {
+            PropertyDTOResponse savedProperty = propertyService.savePropertyWithImages(propertyDTO, files);
+            return ResponseEntity.ok(savedProperty);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+
 //    @PostMapping
 //    @PreAuthorize("hasRole('USER')")
 //    public ResponseEntity<PropertyDTOResponse> createPropertyWithImage(@RequestBody PropertyDTORequest propertyDTO) {

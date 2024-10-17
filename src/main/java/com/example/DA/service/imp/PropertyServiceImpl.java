@@ -115,6 +115,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public List<PropertyDTOResponse> getPropertiesByUserId(Integer userId) {
         return propertyRepository.findPropertiesByOwnerId(userId).stream()
@@ -141,6 +142,31 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public void deleteProperty(Integer propertyId) {
         propertyRepository.deleteById(propertyId);
+    }
+
+    public PropertyDTOResponse savePropertyWithImages(PropertyDTORequest dto, MultipartFile[] files) {
+        // 1. Lưu thông tin property
+        Property property = convertToEntityFromRequest(dto);
+
+        // Thiết lập các quan hệ liên kết
+        property.setStatus(statusRepository.findById(dto.getStatusId()).orElse(null));
+        property.setOwner(userRepository.findById(dto.getOwnerId()).orElse(null));
+        property.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
+
+        property.setPhuong(phuongRepository.findByName(dto.getPhuong()).get(0));
+        property.setDistrict(districtRepository.findByName(dto.getDistrict()).get(0));
+        property.setProvince(provinceRepository.findByName(dto.getProvince()).get(0));
+
+        // Lưu property vào CSDL và lấy propertyId
+        Property savedProperty = propertyRepository.save(property);
+
+        // 2. Upload ảnh và lưu vào CSDL
+        List<String> imageUrls = uploadPropertyImages(savedProperty.getPropertyId(), files);
+        
+        propertyRepository.save(savedProperty);
+
+        // 4. Trả về DTO đã được lưu
+        return convertToDTO(savedProperty);
     }
 
     @Override
