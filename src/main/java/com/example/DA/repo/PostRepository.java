@@ -31,8 +31,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Page<Post> searchPosts(
             @Param("district") Integer district,
             @Param("province") Integer province,
-            @Param("minPrice") Integer minPrice,
-            @Param("maxPrice") Integer maxPrice,
+            @Param("minPrice") Long minPrice,
+            @Param("maxPrice") Long maxPrice,
             @Param("postType") String postType,
             @Param("minArea") Double minArea,
             @Param("maxArea") Double maxArea,

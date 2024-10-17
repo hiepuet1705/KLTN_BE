@@ -12,8 +12,8 @@ import lombok.Setter;
 public class PostSearchCriteria {
     private String district;
     private String province;
-    private Integer minPrice;
-    private Integer maxPrice;
+    private Long minPrice;
+    private Long maxPrice;
     private String postType;
     private Double minArea;
     private Double maxArea;
