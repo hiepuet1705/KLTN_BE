@@ -4,6 +4,7 @@ package com.example.DA.service.imp;
 import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.dto.PropertyDTORequest;
 import com.example.DA.dto.PropertyDTOResponse;
+import com.example.DA.dto.UtilityDTO;
 import com.example.DA.exception.ApiException;
 import com.example.DA.model.Property;
 import com.example.DA.model.PropertyImage;
@@ -93,7 +94,11 @@ public class PropertyServiceImpl implements PropertyService {
         property.setStatus(statusRepository.findById(dto.getStatusId()).orElse(null));
         property.setOwner(userRepository.findById(dto.getOwnerId()).orElse(null));
         property.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
-
+        Double[] coordinates = geoCodingService.getLatLonFromAddress(dto.getLocation(), dto.getPhuong(), dto.getDistrict(), dto.getProvince());
+        if (coordinates != null) {
+            property.setLat(coordinates[0]);
+            property.setLon(coordinates[1]);
+        }
         property.setPhuong(phuongRepository.findByName(dto.getPhuong()).get(0));
         property.setDistrict(districtRepository.findByName(dto.getDistrict()).get(0));
         property.setProvince(provinceRepository.findByName(dto.getProvince()).get(0));
@@ -123,21 +128,6 @@ public class PropertyServiceImpl implements PropertyService {
                 .collect(Collectors.toList());
     }
 
-    public List<Utility> getNearbyUtilities(Integer propertyId) {
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Property not found"));
-
-        double propertyLat = property.getLat();
-        double propertyLon = property.getLon();
-
-        List<Utility> allUtilities = utilityRepository.findAll();
-
-        // Lọc danh sách utilities có khoảng cách nhỏ hơn 5km
-        return allUtilities.stream()
-                .filter(utility -> distanceService.calculateDistance(propertyLat, propertyLon, utility.getLat(), utility.getLon()) < 5)
-                .collect(Collectors.toList());
-    }
-
 
     @Override
     public void deleteProperty(Integer propertyId) {
@@ -157,12 +147,18 @@ public class PropertyServiceImpl implements PropertyService {
         property.setDistrict(districtRepository.findByName(dto.getDistrict()).get(0));
         property.setProvince(provinceRepository.findByName(dto.getProvince()).get(0));
 
+        Double[] coordinates = geoCodingService.getLatLonFromAddress(dto.getLocation(), dto.getPhuong(), dto.getDistrict(), dto.getProvince());
+        if (coordinates != null) {
+            property.setLat(coordinates[0]);
+            property.setLon(coordinates[1]);
+        }
+
         // Lưu property vào CSDL và lấy propertyId
         Property savedProperty = propertyRepository.save(property);
 
         // 2. Upload ảnh và lưu vào CSDL
         List<String> imageUrls = uploadPropertyImages(savedProperty.getPropertyId(), files);
-        
+
         propertyRepository.save(savedProperty);
 
         // 4. Trả về DTO đã được lưu
@@ -205,11 +201,6 @@ public class PropertyServiceImpl implements PropertyService {
         return dto;
     }
 
-
-    public Property convertToEntity(PropertyDTOResponse dto) {
-        Property property = modelMapper.map(dto, Property.class);
-        return property;
-    }
 
     public Property convertToEntityFromRequest(PropertyDTORequest dto) {
         Property property = modelMapper.map(dto, Property.class);

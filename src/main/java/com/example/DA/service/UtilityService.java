@@ -11,7 +11,7 @@ public interface UtilityService {
 
     UtilityDTO createUtility(UtilityDTO utilityDTO);
 
-    UtilityDTO updateUtility(Integer utilityId, UtilityDTO utilityDTO);
-
     void deleteUtility(Integer utilityId);
+
+    public List<UtilityDTO> getNearbyUtilities(Integer propertyId);
 }

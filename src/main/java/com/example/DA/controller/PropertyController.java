@@ -3,6 +3,7 @@ package com.example.DA.controller;
 
 import com.example.DA.dto.PropertyDTORequest;
 import com.example.DA.dto.PropertyDTOResponse;
+import com.example.DA.dto.UtilityDTO;
 import com.example.DA.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 public class PropertyController {
     @Autowired
     private PropertyService propertyService;
+
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
@@ -41,14 +43,6 @@ public class PropertyController {
         }
     }
 
-
-//    @PostMapping
-//    @PreAuthorize("hasRole('USER')")
-//    public ResponseEntity<PropertyDTOResponse> createPropertyWithImage(@RequestBody PropertyDTORequest propertyDTO) {
-//
-//        PropertyDTOResponse savedProperty = propertyService.saveProperty(propertyDTO);
-//        return ResponseEntity.ok(savedProperty);
-//    }
 
     @PostMapping("/{propertyId}/images")
     @PreAuthorize("hasRole('USER')")

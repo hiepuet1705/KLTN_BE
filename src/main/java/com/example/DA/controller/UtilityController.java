@@ -5,7 +5,9 @@ import com.example.DA.dto.UtilityDTO;
 import com.example.DA.model.Utility;
 import com.example.DA.service.UtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,11 +34,13 @@ public class UtilityController {
         return utilityService.createUtility(utilityDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UtilityDTO> updateUtility(@PathVariable Integer id, @RequestBody UtilityDTO utilityDTO) {
-        UtilityDTO updatedUtility = utilityService.updateUtility(id, utilityDTO);
-        return updatedUtility != null ? ResponseEntity.ok(updatedUtility) : ResponseEntity.notFound().build();
+    @GetMapping("/near/{propertyId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<UtilityDTO>> getNearUtilities(@PathVariable Integer propertyId) {
+        List<UtilityDTO> utilityDTOs = utilityService.getNearbyUtilities(propertyId);
+        return new ResponseEntity<>(utilityDTOs, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUtility(@PathVariable Integer id) {

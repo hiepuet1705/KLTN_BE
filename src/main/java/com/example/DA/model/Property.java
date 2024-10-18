@@ -61,8 +61,6 @@ public class Property extends DateTime {
     @JoinColumn(name = "province_id")
     private Province province;
 
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Utility> utilities;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PropertyImage> images = new ArrayList<>();

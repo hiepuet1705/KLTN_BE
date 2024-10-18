@@ -15,7 +15,7 @@ public class UtilityDTO {
     private String utilityName;
     private String location;
     private Integer utilityTypeId;
-    private Integer phuongId;
-    private Integer districtId;
-    private Integer provinceId;
+    private String phuong;
+    private String district;
+    private String province;
 }
