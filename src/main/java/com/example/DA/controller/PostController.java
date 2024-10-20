@@ -78,6 +78,16 @@ public class PostController {
         }
     }
 
+    @PutMapping("/{postId}/payment-status")
+    public ResponseEntity<String> updatePaymentStatus(@PathVariable Integer postId) {
+        try {
+            postService.updatePaymentStatus(postId); // Set paymentStatus thành 1
+            return ResponseEntity.ok("Payment status updated successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public PostWithPropertyDTO createPost(@RequestBody PostDTO postDTO) {

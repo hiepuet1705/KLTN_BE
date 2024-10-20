@@ -188,6 +188,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public String updatePaymentStatus(Integer postId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            throw new RuntimeException("Post not found with ID: " + postId);
+        }
+
+        // Cập nhật paymentStatus
+        Post post = optionalPost.get();
+        post.setPaymentStatus(1);
+        return "Payment cho post" + " postId" + " đã được thanh toán";
+    }
+
+    @Override
     public List<PostWithPropertyDTO> getFavouritePosts(Integer userId) {
         List<FavoriteList> favorites = favoriteListRepository.findByUser_UserId(userId);
         List<PostWithPropertyDTO> favoritePosts = favorites.stream()

@@ -38,6 +38,10 @@ public class Post extends DateTime {
     @Column(name = "post_type", nullable = false)
     private String postType;
 
+
+    @Column(name = "payment_status")
+    private Integer paymentStatus;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
