@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -43,7 +44,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findByUserId(Integer userId);
 
     @Query("""
-                SELECT COUNT(p) > 0 FROM Post p
+                SELECT p FROM Post p
                 WHERE p.postTitle = :postTitle
                   AND p.postContent = :postContent
                   AND p.charged = 1
@@ -53,7 +54,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
                   AND p.property.propertyId = :propertyId
                   AND p.user.id = :userId
             """)
-    boolean existsIfCharged(
+    Optional<Post> findIfCharged(
             @Param("postTitle") String postTitle,
             @Param("postContent") String postContent,
             @Param("price") Long price,

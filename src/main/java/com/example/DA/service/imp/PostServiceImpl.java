@@ -84,7 +84,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostWithPropertyDTO createPost(PostDTO postDTO) {
         if (postDTO.getCharged() == 1) {
-            boolean exists = postRepository.existsIfCharged(
+            Optional<Post> existingPost = postRepository.findIfCharged(
                     postDTO.getPostTitle(),
                     postDTO.getPostContent(),
                     postDTO.getPrice(),
@@ -94,12 +94,13 @@ public class PostServiceImpl implements PostService {
                     postDTO.getUserId()
             );
 
-            if (exists) {
-                throw new IllegalArgumentException("Bài viết đã tồn tại với charged = 1.");
+            if (existingPost.isPresent()) {
+                // Trả về PostWithPropertyDTO của bài viết đã tồn tại
+                return convertToPostWithPropertyDTO(existingPost.get());
             }
         }
 
-        // Nếu không trùng lặp, hoặc charged = 0, tạo bài viết mới
+        // Nếu không trùng hoặc charged = 0, tạo bài viết mới
         Post post = convertToEntity(postDTO);
         post = postRepository.save(post);
         return convertToPostWithPropertyDTO(post);
