@@ -42,5 +42,26 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     List<Post> findByUserId(Integer userId);
 
+    @Query("""
+                SELECT COUNT(p) > 0 FROM Post p
+                WHERE p.postTitle = :postTitle
+                  AND p.postContent = :postContent
+                  AND p.charged = 1
+                  AND p.price = :price
+                  AND p.status = :status
+                  AND p.postType = :postType
+                  AND p.property.propertyId = :propertyId
+                  AND p.user.id = :userId
+            """)
+    boolean existsIfCharged(
+            @Param("postTitle") String postTitle,
+            @Param("postContent") String postContent,
+            @Param("price") Long price,
+            @Param("status") String status,
+            @Param("postType") String postType,
+            @Param("propertyId") Integer propertyId,
+            @Param("userId") Integer userId
+    );
+
 
 }
