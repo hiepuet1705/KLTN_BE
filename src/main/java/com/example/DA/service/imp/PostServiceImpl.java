@@ -197,6 +197,7 @@ public class PostServiceImpl implements PostService {
         // Cập nhật paymentStatus
         Post post = optionalPost.get();
         post.setPaymentStatus(1);
+        postRepository.save(post);
         return "Payment cho post" + " postId" + " đã được thanh toán";
     }
 

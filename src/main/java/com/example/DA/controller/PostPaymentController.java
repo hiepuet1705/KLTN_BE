@@ -55,6 +55,7 @@ public class PostPaymentController {
 
         // Kiểm tra trạng thái giao dịch và trả về thông báo
         if ("0".equals(resultCode)) {
+            postService.updatePaymentStatus(postId);
             return "Thanh toán thành công cho bài đăng ID: " + postId;
         } else {
             return "Thanh toán thất bại: " + message;
