@@ -20,5 +20,6 @@ public class PostDTO {
     private String status;
     private String postType;
     private Integer propertyId;
+    private Integer paymentStatus;
     private Integer userId;
 }

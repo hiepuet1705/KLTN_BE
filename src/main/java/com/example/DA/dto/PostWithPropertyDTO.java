@@ -20,6 +20,7 @@ public class PostWithPropertyDTO {
     private Long price;
     private String status;
     private String postType;
+    private Integer paymentStatus;
     private PropertyDTOResponse property;
     private Integer userId;
 }

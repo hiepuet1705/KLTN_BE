@@ -40,7 +40,7 @@ public class Post extends DateTime {
 
 
     @Column(name = "payment_status")
-    private Integer paymentStatus;
+    private Integer paymentStatus = 0;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
