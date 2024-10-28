@@ -169,10 +169,11 @@ public class PostServiceImpl implements PostService {
         dto.setPrice(post.getPrice());
         dto.setStatus(post.getStatus());
         dto.setPostType(post.getPostType());
-
+        dto.setPaymentStatus(post.getPaymentStatus());
         PropertyDTOResponse propertyDTO = propertyService.convertToDTO(post.getProperty());
         dto.setProperty(propertyDTO);
         dto.setUserId(post.getUser().getId());
+        dto.setCreatedAt(post.getCreatedAt());
 
         return dto;
     }
@@ -189,8 +190,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostWithPropertyDTO getPostWithProperty(Integer postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
-        PostWithPropertyDTO postDTO = convertToPostWithPropertyDTO(post);
 
+        PostWithPropertyDTO postDTO = convertToPostWithPropertyDTO(post);
 
         return postDTO;
     }
@@ -200,7 +201,10 @@ public class PostServiceImpl implements PostService {
     public List<PostWithPropertyDTO> getPostsByStatus(String status) {
         List<Post> posts = postRepository.findByStatus(status);
         return posts.stream()
-                .map(this::convertToPostWithPropertyDTO)
+                .map((post) -> {
+
+                    return convertToPostWithPropertyDTO(post);
+                })
                 .collect(Collectors.toList());
 
     }
@@ -252,6 +256,15 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
 
         return convertToPostWithPropertyDTO(post);
+    }
+
+    @Override
+    public void checkPostExpiration() {
+        List<Post> posts = postRepository.findAll(); // Fetch all posts
+        for (Post post : posts) {
+            post.checkExpiration(); // Call the method to check expiration
+            postRepository.save(post); // Save the updated post back to the database
+        }
     }
 
 

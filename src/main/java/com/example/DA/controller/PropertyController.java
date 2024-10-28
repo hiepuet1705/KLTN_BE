@@ -68,6 +68,13 @@ public class PropertyController {
 //        return ResponseEntity.ok(updatedProperty);
 //    }
 
+    @GetMapping("{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<PropertyDTOResponse> getPropertyById(@PathVariable Integer id) {
+        PropertyDTOResponse properties = propertyService.getPropertyById(id);
+        return ResponseEntity.ok(properties);
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<PropertyDTOResponse>> getAllProperty() {

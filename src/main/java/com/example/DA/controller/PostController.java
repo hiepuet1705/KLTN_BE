@@ -59,6 +59,7 @@ public class PostController {
 
     @GetMapping("/status")
     public ResponseEntity<List<PostWithPropertyDTO>> getPostsByStatus(@RequestParam(name = "status", required = false, defaultValue = "pending") String status) {
+        postService.checkPostExpiration();
         List<PostWithPropertyDTO> posts = postService.getPostsByStatus(status);
         if (posts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

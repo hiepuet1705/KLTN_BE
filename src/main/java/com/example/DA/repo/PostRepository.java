@@ -20,6 +20,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "FROM Post p \n" +
             "JOIN p.property prop \n" +
             "WHERE \n" +
+            "    p.status = 'approved' AND\n" + // Thêm điều kiện mới
             "    (:district IS NULL OR prop.district.id = :district) AND\n" +
             "    (:province IS NULL OR prop.province.id = :province) AND\n" +
             "    (:minPrice IS NULL OR p.price >= :minPrice) AND\n" +
@@ -39,7 +40,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             @Param("maxArea") Double maxArea,
             @Param("categoryId") Integer categoryId,
             Pageable pageable);
-
+    
 
     List<Post> findByUserId(Integer userId);
 

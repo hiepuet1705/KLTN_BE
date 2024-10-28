@@ -36,4 +36,6 @@ public interface PostService {
     public List<PostWithPropertyDTO> getFavouritePosts(Integer userId);
 
     public PostWithPropertyDTO updatePostStatus(Integer postId, String status);
+
+    void checkPostExpiration();
 }

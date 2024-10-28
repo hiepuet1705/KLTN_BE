@@ -1,6 +1,5 @@
 package com.example.DA.model;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -17,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Post extends DateTime {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer postId;
@@ -29,7 +29,7 @@ public class Post extends DateTime {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    @Pattern(regexp = "pending|approved|rejected", message = "status must be 'pending', 'approved', or 'rejected'")
+    @Pattern(regexp = "pending|approved|rejected|expired", message = "status must be 'pending', 'approved', 'rejected', or 'expired'")
     @Column(name = "status", nullable = false)
     private String status = "pending";  // default value
 
@@ -37,7 +37,6 @@ public class Post extends DateTime {
     @Pattern(regexp = "for_sale|for_rent", message = "postType must be 'for_sale' or 'for_rent'")
     @Column(name = "post_type", nullable = false)
     private String postType;
-
 
     @Column(name = "payment_status")
     private Integer paymentStatus = 0;
@@ -48,5 +47,10 @@ public class Post extends DateTime {
 
     private Long price;
 
+    // Phương thức kiểm tra xem post đã hết hạn chưa
+    public void checkExpiration() {
+        if (this.getCreatedAt().plusDays(30).isBefore(LocalDateTime.now())) {
+            this.status = "expired"; // Đặt trạng thái thành expired nếu đã qua 30 ngày
+        }
+    }
 }
-

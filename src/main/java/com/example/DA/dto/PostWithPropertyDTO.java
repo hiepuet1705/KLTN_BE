@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +25,5 @@ public class PostWithPropertyDTO {
     private Integer paymentStatus;
     private PropertyDTOResponse property;
     private Integer userId;
+    private LocalDateTime createdAt;  // New field
 }
