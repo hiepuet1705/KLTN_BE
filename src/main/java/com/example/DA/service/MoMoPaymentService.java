@@ -24,10 +24,6 @@ public class MoMoPaymentService {
 
     @Value("${momo.secretKey}")
     private String secretKey;
-
-    @Value("${momo.redirectUrl}")
-    private String redirectUrl;
-
     @Value("${momo.notifyUrl}")
     private String notifyUrl;
 
@@ -40,6 +36,7 @@ public class MoMoPaymentService {
         String orderId = "POST_" + postId + "_" + requestId;
         String orderInfo = "Payment for post ID " + postId;
         String extraData = ""; // Giữ trống nếu không có dữ liệu bổ sung
+        String redirectUrl = "http://localhost:5173/bds/" + postId;
 
         // Chuỗi rawData để tạo chữ ký, chú ý thứ tự tham số
         String rawData = "accessKey=" + accessKey

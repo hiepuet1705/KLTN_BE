@@ -22,7 +22,10 @@ public class Post extends DateTime {
     private Integer postId;
 
     private String postTitle;
+
+    @Lob  // This annotation specifies that the field should be treated as a large object (TEXT)
     private String postContent;
+
     private Integer charged = 0;
 
     @ManyToOne
