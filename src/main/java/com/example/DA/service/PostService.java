@@ -10,7 +10,12 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PostService {
+
+    Integer countApprovedPostsByPropertyId(Integer propertyId);
+
     List<PostWithPropertyDTO> getAllPosts();
+
+    List<PostWithPropertyDTO> getPostByPropertyId(Integer propertyId);
 
     List<PostWithPropertyDTO> getPostByUserId(Integer userId);
 

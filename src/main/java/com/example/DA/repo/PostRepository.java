@@ -14,6 +14,15 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
+
+
+    @Query("SELECT COUNT(p) FROM Post p WHERE p.property.id = :propertyId AND p.status = 'approved'")
+    Integer countApprovedPostsByPropertyId(@Param("propertyId") Integer propertyId);
+
+    @Query("SELECT p FROM Post p WHERE p.property.propertyId = :propertyId AND p.status = 'approved'")
+    List<Post> findByPropertyId(@Param("propertyId") Integer propertyId);
+
+
     List<Post> findByStatus(String status);
 
     @Query("SELECT p \n" +
@@ -40,7 +49,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             @Param("maxArea") Double maxArea,
             @Param("categoryId") Integer categoryId,
             Pageable pageable);
-    
+
+
+    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND p.status = 'approved'")
+    List<Post> findApprovedPostsByUserId(@Param("userId") Integer userId);
 
     List<Post> findByUserId(Integer userId);
 

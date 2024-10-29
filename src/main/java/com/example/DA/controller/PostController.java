@@ -4,7 +4,6 @@ import com.example.DA.dto.PostDTO;
 import com.example.DA.dto.PostSearchCriteria;
 import com.example.DA.dto.PostWithPropertyDTO;
 import com.example.DA.dto.UpdatePostStatusDTO;
-import com.example.DA.model.Post;
 import com.example.DA.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +26,27 @@ public class PostController {
 
     @GetMapping("/{id}")
     public PostWithPropertyDTO getPostWithProperty(@PathVariable Integer id) {
+        postService.checkPostExpiration();
         return postService.getPostWithProperty(id);
+    }
+
+
+    @GetMapping("/count/{propertyId}")
+    public ResponseEntity<Integer> countApprovedPostsByPropertyId(@PathVariable Integer propertyId) {
+        Integer count = postService.countApprovedPostsByPropertyId(propertyId);
+        return ResponseEntity.ok(count);
+    }
+
+
+    @GetMapping("/properties/{propertyId}")
+    public List<PostWithPropertyDTO> getPostByPropertyId(@PathVariable Integer propertyId) {
+        postService.checkPostExpiration();
+        return postService.getPostByPropertyId(propertyId);
     }
 
     @GetMapping("/{userId}/favourites")
     public ResponseEntity<List<PostWithPropertyDTO>> getFavouritePost(@PathVariable Integer userId) {
+        postService.checkPostExpiration();
         List<PostWithPropertyDTO> postWithPropertyDTOList = postService.getFavouritePosts(userId);
         return new ResponseEntity<>(postWithPropertyDTOList, HttpStatus.OK);
     }
@@ -44,11 +59,12 @@ public class PostController {
 
     @PostMapping("/search")
     public Page<PostWithPropertyDTO> searchPosts(@RequestBody PostSearchCriteria criteria, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        postService.checkPostExpiration();
         return postService.searchPost(criteria, pageable);
     }
 
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<List<PostWithPropertyDTO>> getPostsByUserId(@PathVariable Integer userId) {
         List<PostWithPropertyDTO> posts = postService.getPostByUserId(userId);
         if (posts.isEmpty()) {

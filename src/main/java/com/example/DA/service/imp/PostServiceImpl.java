@@ -21,10 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -67,8 +64,27 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostWithPropertyDTO> getPostByPropertyId(Integer propertyId) {
+        List<Post> posts = postRepository.findByPropertyId(propertyId);
+
+        // Kiểm tra nếu không có bài đăng nào được tìm thấy
+        if (posts.isEmpty()) {
+            return Collections.emptyList();  // Trả về danh sách rỗng nếu không có kết quả
+        }
+
+        // Chuyển đổi từ List<Post> sang List<PostWithPropertyDTO> bằng stream
+        return posts.stream()
+                .map(this::convertToPostWithPropertyDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Integer countApprovedPostsByPropertyId(Integer propertyId) {
+        return postRepository.countApprovedPostsByPropertyId(propertyId);
+    }
+
+    @Override
     public List<PostWithPropertyDTO> getPostByUserId(Integer userId) {
-        List<Post> posts = postRepository.findByUserId(userId);
+        List<Post> posts = postRepository.findApprovedPostsByUserId(userId);
         // Convert Post entities to PostDTOs
         return posts.stream()
                 .map(this::convertToPostWithPropertyDTO)
