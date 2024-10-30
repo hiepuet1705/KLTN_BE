@@ -91,7 +91,6 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public PropertyDTOResponse saveProperty(PropertyDTORequest dto) {
         Property property = convertToEntityFromRequest(dto);
-        property.setStatus(statusRepository.findById(dto.getStatusId()).orElse(null));
         property.setOwner(userRepository.findById(dto.getOwnerId()).orElse(null));
         property.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
         Double[] coordinates = geoCodingService.getLatLonFromAddress(dto.getLocation(), dto.getPhuong(), dto.getDistrict(), dto.getProvince());
@@ -135,17 +134,27 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     public PropertyDTOResponse savePropertyWithImages(PropertyDTORequest dto, MultipartFile[] files) {
-        // 1. Lưu thông tin property
         Property property = convertToEntityFromRequest(dto);
 
-        // Thiết lập các quan hệ liên kết
-        property.setStatus(statusRepository.findById(dto.getStatusId()).orElse(null));
-        property.setOwner(userRepository.findById(dto.getOwnerId()).orElse(null));
-        property.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
+        // Không cần lấy status từ request vì đã có default là "pending"
+        property.setOwner(userRepository.findById(dto.getOwnerId())
+                .orElseThrow(() -> new IllegalArgumentException("Owner not found")));
 
-        property.setPhuong(phuongRepository.findByName(dto.getPhuong()).get(0));
-        property.setDistrict(districtRepository.findByName(dto.getDistrict()).get(0));
-        property.setProvince(provinceRepository.findByName(dto.getProvince()).get(0));
+        property.setCategory(categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found")));
+
+        property.setPhuong(phuongRepository.findByName(dto.getPhuong())
+                .stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Phường not found")));
+
+        property.setDistrict(districtRepository.findByName(dto.getDistrict())
+                .stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("District not found")));
+
+        property.setProvince(provinceRepository.findByName(dto.getProvince())
+                .stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Province not found")));
+
 
         Double[] coordinates = geoCodingService.getLatLonFromAddress(dto.getLocation(), dto.getPhuong(), dto.getDistrict(), dto.getProvince());
         if (coordinates != null) {
@@ -203,7 +212,8 @@ public class PropertyServiceImpl implements PropertyService {
 
 
     public Property convertToEntityFromRequest(PropertyDTORequest dto) {
-        Property property = modelMapper.map(dto, Property.class);
+        Property property = new Property();
+        property = modelMapper.map(dto, Property.class);
         return property;
     }
 

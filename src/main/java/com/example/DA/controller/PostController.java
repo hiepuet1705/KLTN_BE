@@ -44,13 +44,6 @@ public class PostController {
         return postService.getPostByPropertyId(propertyId);
     }
 
-    @GetMapping("/{userId}/favourites")
-    public ResponseEntity<List<PostWithPropertyDTO>> getFavouritePost(@PathVariable Integer userId) {
-        postService.checkPostExpiration();
-        List<PostWithPropertyDTO> postWithPropertyDTOList = postService.getFavouritePosts(userId);
-        return new ResponseEntity<>(postWithPropertyDTOList, HttpStatus.OK);
-    }
-
 
     @GetMapping
     public List<PostWithPropertyDTO> getAllPosts() {

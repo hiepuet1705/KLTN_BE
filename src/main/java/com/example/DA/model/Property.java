@@ -2,6 +2,7 @@ package com.example.DA.model;
 
 import com.example.DA.model.enums_entity.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +22,12 @@ public class Property extends DateTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer propertyId;
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private PropertyStatus status;
+
+
+    @Pattern(regexp = "pending|approved|rejected", message = "status must be 'pending', 'approved', 'rejected'")
+    @Column(name = "status", nullable = false)
+    private String status = "pending";  // default value
+
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
