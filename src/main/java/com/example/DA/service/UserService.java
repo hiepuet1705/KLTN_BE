@@ -12,6 +12,7 @@ public interface UserService {
 
     public void sendVerificationEmail(String email);
 
+    public UserDTOResponse getUserById(Integer id);
 
     public boolean verifyUser(String email, String code);
 }

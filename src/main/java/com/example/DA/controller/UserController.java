@@ -51,4 +51,16 @@ public class UserController {
         List<UserDTOResponse> lists = userService.getAllUsers();
         return new ResponseEntity<>(lists, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<UserDTOResponse> getUserById(@PathVariable Integer id) {
+        UserDTOResponse user = userService.getUserById(id);
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

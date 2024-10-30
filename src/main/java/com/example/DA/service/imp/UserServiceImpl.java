@@ -69,6 +69,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public UserDTOResponse getUserById(Integer id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("User not found with id: " + id));
+
+        UserDTOResponse userDTOResponse = new UserDTOResponse();
+        userDTOResponse.setPhone(user.getPhone());
+        userDTOResponse.setId(user.getId());
+        userDTOResponse.setName(user.getName());
+        userDTOResponse.setUsername(user.getUsername());
+        userDTOResponse.setEmail(user.getEmail());
+
+        return userDTOResponse;
+    }
+
     // Verify user with code
     @Transactional
     public boolean verifyUser(String email, String code) {
