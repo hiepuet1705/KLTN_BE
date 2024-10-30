@@ -9,4 +9,9 @@ public interface UserService {
     UserDTOResponse findUserByPhone(String phone);
 
     List<UserDTOResponse> getAllUsers();
+
+    public void sendVerificationEmail(String email);
+
+
+    public boolean verifyUser(String email, String code);
 }

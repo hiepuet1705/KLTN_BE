@@ -31,6 +31,8 @@ public class User extends DateTime {
     @Column(nullable = false)
     private String password;
 
+    private Integer isVerified;
+
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",
