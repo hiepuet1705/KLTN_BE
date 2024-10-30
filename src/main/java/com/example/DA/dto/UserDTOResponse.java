@@ -16,4 +16,5 @@ public class UserDTOResponse {
     private String phone;
     private String email;
     private String username;
+    private Integer isVerified;
 }

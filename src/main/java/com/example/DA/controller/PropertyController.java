@@ -5,7 +5,9 @@ import com.example.DA.dto.PropertyDTORequest;
 import com.example.DA.dto.PropertyDTOResponse;
 import com.example.DA.dto.UtilityDTO;
 import com.example.DA.service.PropertyService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,19 @@ public class PropertyController {
             return ResponseEntity.ok(savedProperty);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{propertyId}/status/approved")
+    public ResponseEntity<PropertyDTOResponse> updateStatusToApproved(@PathVariable Integer propertyId) {
+        try {
+            // Cập nhật trạng thái của property thành "approved"
+            PropertyDTOResponse updatedProperty = propertyService.updatePropertyStatus(propertyId, "approved");
+            return new ResponseEntity<>(updatedProperty, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

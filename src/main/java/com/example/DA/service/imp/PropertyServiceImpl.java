@@ -14,6 +14,7 @@ import com.example.DA.service.DistanceService;
 import com.example.DA.service.GeoCodingService;
 import com.example.DA.service.PropertyService;
 import com.example.DA.service.S3Service;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -86,6 +87,23 @@ public class PropertyServiceImpl implements PropertyService {
         propertyRepository.save(property);
         return "Update Lat and Long with property  " + propertyId;
 
+    }
+
+
+    public PropertyDTOResponse updatePropertyStatus(Integer propertyId, String status) {
+        // Tìm property theo ID
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new EntityNotFoundException("Property not found"));
+
+        // Kiểm tra và cập nhật trạng thái
+        if (!status.equals("approved")) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+
+        property.setStatus(status);
+        propertyRepository.save(property);
+
+        return convertToDTO(property);
     }
 
     @Override

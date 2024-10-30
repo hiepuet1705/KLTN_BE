@@ -63,7 +63,7 @@ public class UtilityServiceImpl implements UtilityService {
 
         // Lọc danh sách utilities có khoảng cách nhỏ hơn 5km
         return allUtilities.stream()
-                .filter(utility -> distanceService.calculateDistance(propertyLat, propertyLon, utility.getLat(), utility.getLon()) < 10)
+                .filter(utility -> distanceService.calculateDistance(propertyLat, propertyLon, utility.getLat(), utility.getLon()) < 6)
                 .map(this::convertToDTO).collect(Collectors.toList());
     }
 

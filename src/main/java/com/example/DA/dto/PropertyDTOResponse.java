@@ -30,5 +30,6 @@ public class PropertyDTOResponse {
     private Double lat;
     private Double lon;
     private Integer age;
+    private String status;
     private List<String> images;
 }

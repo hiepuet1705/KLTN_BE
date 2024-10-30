@@ -24,8 +24,7 @@ public class Property extends DateTime {
     private Integer propertyId;
 
 
-    @Pattern(regexp = "pending|approved|rejected", message = "status must be 'pending', 'approved', 'rejected'")
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = true)
     private String status = "pending";  // default value
 
 

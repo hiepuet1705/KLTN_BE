@@ -25,6 +25,7 @@ public class PropertyDTORequest {
     private String phuong;
     private String district;
     private String province;
+    private String status = "pending";
     private Double area;
     private Integer sophong;
     private Integer soTang;

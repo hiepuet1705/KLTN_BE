@@ -16,6 +16,7 @@ import java.util.List;
 public interface PropertyService {
     PropertyDTOResponse saveProperty(PropertyDTORequest dto);
 
+    public PropertyDTOResponse updatePropertyStatus(Integer propertyId, String status);
 
     PropertyDTOResponse getPropertyById(Integer propertyId);
 

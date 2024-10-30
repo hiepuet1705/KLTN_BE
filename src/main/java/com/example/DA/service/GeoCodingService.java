@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Service
 public class GeoCodingService {
 
@@ -14,6 +17,10 @@ public class GeoCodingService {
         try {
             // Kết hợp các phần của địa chỉ thành một chuỗi duy nhất
             String fullAddress = buildFullAddress(location, phuong, district, province);
+
+            // Mã hóa địa chỉ
+            String encodedAddress = URLEncoder.encode(fullAddress, StandardCharsets.UTF_8.toString());
+            String url = NOMINATIM_URL.replace("{address}", encodedAddress);
 
             RestTemplate restTemplate = new RestTemplate();
             String response = restTemplate.getForObject(NOMINATIM_URL, String.class, fullAddress);
