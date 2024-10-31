@@ -45,7 +45,7 @@ public class PropertyController {
         }
     }
 
-    @PutMapping("/{propertyId}/status/approved")
+    @PutMapping("/{propertyId}/status")
     public ResponseEntity<PropertyDTOResponse> updateStatusToApproved(@PathVariable Integer propertyId) {
         try {
             // Cập nhật trạng thái của property thành "approved"
@@ -53,6 +53,16 @@ public class PropertyController {
             return new ResponseEntity<>(updatedProperty, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<List<PropertyDTOResponse>> getPropertiesByStatus(@RequestParam String status) {
+        try {
+            List<PropertyDTOResponse> properties = propertyService.getPropertiesByStatus(status);
+            return new ResponseEntity<>(properties, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

@@ -20,6 +20,8 @@ public interface PropertyService {
 
     PropertyDTOResponse getPropertyById(Integer propertyId);
 
+    List<PropertyDTOResponse> getPropertiesByStatus(String status);
+
     List<PropertyDTOResponse> getAllProperties();
 
     List<PropertyDTOResponse> getPropertiesByUserId(Integer userId);

@@ -15,6 +15,8 @@ public interface PostService {
 
     List<PostWithPropertyDTO> getAllPosts();
 
+    public Integer getPostByMonth(Integer month, Integer year);
+
     List<PostWithPropertyDTO> getPostByPropertyId(Integer propertyId);
 
     List<PostWithPropertyDTO> getPostByUserId(Integer userId);

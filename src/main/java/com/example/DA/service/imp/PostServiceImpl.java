@@ -21,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -89,6 +91,21 @@ public class PostServiceImpl implements PostService {
         return posts.stream()
                 .map(this::convertToPostWithPropertyDTO)
                 .toList();
+    }
+
+    @Override
+    public Integer getPostByMonth(Integer month, Integer year) {
+        List<PostWithPropertyDTO> postWithPropertyDTOList = getPostsByStatus("approved");
+
+// Filter posts by the specified month and year, then count posts per day
+        long postCount = postWithPropertyDTOList.stream()
+                .filter(post -> {
+                    LocalDateTime createdAt = post.getCreatedAt();
+                    return createdAt.getMonthValue() == month && createdAt.getYear() == year;
+                })
+                .count();
+
+        return (int) postCount;
     }
 
     @Override

@@ -131,6 +131,21 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
+    public List<PropertyDTOResponse> getPropertiesByStatus(String status) {
+        if (!status.equals("pending") && !status.equals("approved") && !status.equals("rejected")) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+
+        // Tìm các bất động sản theo trạng thái
+        List<Property> properties = propertyRepository.findByStatus(status);
+
+        // Chuyển đổi danh sách Property thành danh sách PropertyDTOResponse
+        return properties.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<PropertyDTOResponse> getAllProperties() {
         return propertyRepository.findAll().stream()
                 .map(this::convertToDTO)
