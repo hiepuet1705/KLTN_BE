@@ -168,10 +168,12 @@ public class PostServiceImpl implements PostService {
                     .map(provinces -> provinces.get(0).getId()) // Lấy giá trị đầu tiên
                     .orElse(null);
 
-        Integer districtId = Optional.ofNullable(districtRepository.findByName(criteria.getDistrict()))
-                .filter(districts -> !districts.isEmpty()) // Kiểm tra nếu mảng không rỗng
-                .map(districts -> districts.get(0).getId())
-                .orElse(null);// Lấy giá trị đầu tiên
+        Integer districtId = null;
+        if (!criteria.getDistrict().equals(""))
+            districtId = Optional.ofNullable(districtRepository.findByName(criteria.getDistrict()))
+                    .filter(districts -> !districts.isEmpty()) // Kiểm tra nếu mảng không rỗng
+                    .map(districts -> districts.get(0).getId())
+                    .orElse(null);// Lấy giá trị đầu tiên
 
 
         Integer categoryId = Optional.ofNullable(categoryRepository.findByName(criteria.getPropertyType()))

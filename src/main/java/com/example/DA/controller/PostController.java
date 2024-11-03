@@ -76,6 +76,15 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getPostCountByMonth(
+            @RequestParam Integer month,
+            @RequestParam Integer year) {
+
+        int postCount = postService.getPostByMonth(month, year); // Call your service method
+        return ResponseEntity.ok(postCount);
+    }
+
     @PutMapping("/{postId}/status")
     public ResponseEntity<PostWithPropertyDTO> updatePostStatus(@PathVariable Integer postId, @RequestBody UpdatePostStatusDTO updatePostStatusDTO) {
         try {

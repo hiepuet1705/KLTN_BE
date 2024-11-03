@@ -35,4 +35,6 @@ public interface PropertyService {
     public PropertyDTOResponse savePropertyWithImages(PropertyDTORequest dto, MultipartFile[] files);
 
 
+    public Integer getPropertiesByProvinceOrAll(String province, Integer month, Integer year);
+
 }

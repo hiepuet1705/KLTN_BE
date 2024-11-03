@@ -22,4 +22,7 @@ public interface PropertyRepository extends JpaRepository<Property, Integer> {
     @Query("SELECT p FROM Property p WHERE p.status = :status")
     List<Property> findByStatus(@Param("status") String status);
 
+    @Query("SELECT p FROM Property p WHERE p.status = 'approved' and p.province.id= :provinceId")
+    List<Property> findPropertiesByProvince(@Param("provinceId") Integer provinceId);
+
 }

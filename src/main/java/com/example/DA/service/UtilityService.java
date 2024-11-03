@@ -13,5 +13,10 @@ public interface UtilityService {
 
     void deleteUtility(Integer utilityId);
 
-    public List<UtilityDTO> getNearbyUtilities(Integer propertyId);
+    public List<UtilityDTO> getNearbyUtilities(Integer propertyId, String type);
+
+    public List<UtilityDTO> getNearbySchools(Integer propertyId);
+
+
+    public List<UtilityDTO> getNearbyHospitals(Integer propertyId);
 }

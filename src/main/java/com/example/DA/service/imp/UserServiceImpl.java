@@ -7,6 +7,7 @@ import com.example.DA.model.OTP;
 import com.example.DA.model.User;
 import com.example.DA.repo.OTPRepository;
 import com.example.DA.repo.UserRepository;
+import com.example.DA.service.EmailService;
 import com.example.DA.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +31,9 @@ public class UserServiceImpl implements UserService {
     private JavaMailSender mailSender;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     OTPRepository otpRepository;
 
     private final Random random = new Random();
@@ -37,36 +42,33 @@ public class UserServiceImpl implements UserService {
         return String.format("%06d", random.nextInt(1000000)); // Generates a 6-digit code
     }
 
+    @Transactional
     public void sendVerificationEmail(String email) {
-        // Tạo mã xác thực ngẫu nhiên (6 chữ số)
         String verificationCode = generateVerificationCode();
-
-        // Tính thời gian hết hạn (ví dụ: 5 phút kể từ thời điểm hiện tại)
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
 
-        // Xóa mã cũ (nếu có) trước khi tạo mã mới
-        otpRepository.deleteByEmail(email);
+        // Xóa OTP cũ và lưu OTP mới trong một tác vụ không đồng bộ
+        CompletableFuture<Void> otpFuture = CompletableFuture.runAsync(() -> {
+            otpRepository.deleteByEmail(email);  // Xóa nếu có OTP cũ
+            OTP otp = new OTP();
+            otp.setEmail(email);
+            otp.setCode(verificationCode);
+            otp.setExpiryTime(expiryTime);
+            otpRepository.save(otp);
+        });
 
-        // Lưu mã OTP mới vào cơ sở dữ liệu
-        OTP otp = new OTP();
-        otp.setEmail(email);
-        otp.setCode(verificationCode);
-        otp.setExpiryTime(expiryTime);
-        otpRepository.save(otp);
+        // Tạo và gửi email xác thực trong một tác vụ không đồng bộ khác
+        CompletableFuture<Void> emailFuture = CompletableFuture.runAsync(() -> {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject("Verification Code");
+            message.setText("Your verification code is: " + verificationCode);
+            emailService.sendEmailAsync(message);
+            System.out.println("Verification email queued for: " + email);
+        });
 
-        // Tạo và gửi email xác thực
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Verification Code");
-        message.setText("Your verification code is: " + verificationCode);
-
-        try {
-            mailSender.send(message);  // Gửi email
-            System.out.println("Verification email sent to: " + email);
-        } catch (Exception e) {
-            System.err.println("Failed to send email: " + e.getMessage());
-            throw new RuntimeException("Error sending verification email", e);
-        }
+        // Chờ cả hai tác vụ hoàn thành
+        CompletableFuture.allOf(otpFuture, emailFuture).join();
     }
 
     @Override
@@ -80,7 +82,7 @@ public class UserServiceImpl implements UserService {
         userDTOResponse.setName(user.getName());
         userDTOResponse.setUsername(user.getUsername());
         userDTOResponse.setEmail(user.getEmail());
-
+        userDTOResponse.setIsVerified(user.getIsVerified());
         return userDTOResponse;
     }
 

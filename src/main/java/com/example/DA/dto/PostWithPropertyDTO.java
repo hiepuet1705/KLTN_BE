@@ -22,7 +22,7 @@ public class PostWithPropertyDTO {
     private Long price;
     private String status;
     private String postType;
-    private Integer paymentStatus;
+    private Integer paymentStatus = 0;
     private PropertyDTOResponse property;
     private Integer userId;
     private LocalDateTime createdAt;  // New field

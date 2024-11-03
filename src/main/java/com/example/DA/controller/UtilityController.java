@@ -23,6 +23,23 @@ public class UtilityController {
         return utilityService.getAllUtilities();
     }
 
+
+    @GetMapping("/near/{propertyId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<UtilityDTO>> getNearUtilities(
+            @PathVariable Integer propertyId,
+            @RequestParam("type") String type) {
+
+        List<UtilityDTO> utilityDTOs = utilityService.getNearbyUtilities(propertyId, type);
+
+        if (utilityDTOs.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content if no utilities are found
+        }
+
+        return new ResponseEntity<>(utilityDTOs, HttpStatus.OK);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<UtilityDTO> getUtilityById(@PathVariable Integer id) {
         UtilityDTO utilityDTO = utilityService.getUtilityById(id);
@@ -34,17 +51,16 @@ public class UtilityController {
         return utilityService.createUtility(utilityDTO);
     }
 
-    @GetMapping("/near/{propertyId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<UtilityDTO>> getNearUtilities(@PathVariable Integer propertyId) {
-        List<UtilityDTO> utilityDTOs = utilityService.getNearbyUtilities(propertyId);
-        return new ResponseEntity<>(utilityDTOs, HttpStatus.OK);
+    @GetMapping("/nearby-schools/{propertyId}")
+    public ResponseEntity<List<UtilityDTO>> getNearbySchools(@PathVariable Integer propertyId) {
+        List<UtilityDTO> nearbySchools = utilityService.getNearbySchools(propertyId);
+        return ResponseEntity.ok(nearbySchools);
     }
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUtility(@PathVariable Integer id) {
-        utilityService.deleteUtility(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/nearby-hospitals/{propertyId}")
+    public ResponseEntity<List<UtilityDTO>> getNearbyHospitals(@PathVariable Integer propertyId) {
+        List<UtilityDTO> nearbyHospitals = utilityService.getNearbyHospitals(propertyId);
+        return ResponseEntity.ok(nearbyHospitals);
     }
+
 }

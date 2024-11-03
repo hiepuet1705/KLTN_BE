@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PropertyDTORequest {
     private Integer propertyId;
-    private Integer statusId;
     private Integer ownerId;
     private String title;
     private String description;

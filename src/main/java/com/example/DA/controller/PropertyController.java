@@ -107,5 +107,18 @@ public class PropertyController {
         return ResponseEntity.ok(properties);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<Integer> getPropertiesByProvinceOrAll(
+            @RequestParam(required = false) String province,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year) {
+        try {
+            Integer numberOfProperties = propertyService.getPropertiesByProvinceOrAll(province, month, year);
+            return new ResponseEntity<>(numberOfProperties, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

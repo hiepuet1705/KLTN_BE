@@ -18,4 +18,7 @@ public class UtilityDTO {
     private String phuong;
     private String district;
     private String province;
+    private Double lat; // Thêm thuộc tính latitude
+    private Double lon; // Thêm thuộc tính longitude
+    private String type; // Loại tiện ích, ví dụ: "school" hoặc "hospital"
 }

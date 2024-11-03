@@ -19,11 +19,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -160,16 +163,40 @@ public class PropertyServiceImpl implements PropertyService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Integer getPropertiesByProvinceOrAll(String province, Integer month, Integer year) {
+        List<Property> properties;
+
+        if (province == null || province.isEmpty() || province.equals("all")) {
+            properties = propertyRepository.findByStatus("approved");
+        } else {
+            Integer provinceId = provinceRepository.findByName(province).get(0).getId();
+            properties = propertyRepository.findPropertiesByProvince(provinceId);
+        }
+
+        long numberOfProperties = properties.stream()
+                .filter(property -> {
+                    LocalDateTime createdAt = property.getCreatedAt(); // Giả sử bạn có phương thức này trong Property
+                    return createdAt.getMonthValue() == month && createdAt.getYear() == year;
+                })
+                .count();
+
+        return (int) numberOfProperties;
+
+    }
+
 
     @Override
     public void deleteProperty(Integer propertyId) {
         propertyRepository.deleteById(propertyId);
     }
 
+
+    @Transactional
     public PropertyDTOResponse savePropertyWithImages(PropertyDTORequest dto, MultipartFile[] files) {
+        // Convert DTO to Property entity and populate fields
         Property property = convertToEntityFromRequest(dto);
 
-        // Không cần lấy status từ request vì đã có default là "pending"
         property.setOwner(userRepository.findById(dto.getOwnerId())
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found")));
 
@@ -188,24 +215,33 @@ public class PropertyServiceImpl implements PropertyService {
                 .stream().findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Province not found")));
 
+        // Step 1: Run geolocation task asynchronously
+        CompletableFuture<Double[]> coordinatesFuture = CompletableFuture.supplyAsync(() ->
+                geoCodingService.getLatLonFromAddress(dto.getLocation(), dto.getPhuong(), dto.getDistrict(), dto.getProvince())
+        );
 
-        Double[] coordinates = geoCodingService.getLatLonFromAddress(dto.getLocation(), dto.getPhuong(), dto.getDistrict(), dto.getProvince());
-        if (coordinates != null) {
-            property.setLat(coordinates[0]);
-            property.setLon(coordinates[1]);
-        }
-
-        // Lưu property vào CSDL và lấy propertyId
+        // Step 2: Save the property synchronously
         Property savedProperty = propertyRepository.save(property);
 
-        // 2. Upload ảnh và lưu vào CSDL
+        // Step 3: Wait for the geolocation result
+        Double[] coordinates = coordinatesFuture.join(); // Wait for the geolocation to finish
+
+        // Step 4: Update property with coordinates if available
+        if (coordinates != null) {
+            savedProperty.setLat(coordinates[0]);
+            savedProperty.setLon(coordinates[1]);
+        }
+
+        // Step 5: Upload images
         List<String> imageUrls = uploadPropertyImages(savedProperty.getPropertyId(), files);
 
+        // Step 6: Save the property again to update coordinates if they were set
         propertyRepository.save(savedProperty);
 
-        // 4. Trả về DTO đã được lưu
+        // Step 7: Return the saved DTO
         return convertToDTO(savedProperty);
     }
+
 
     @Override
     public List<String> uploadPropertyImages(Integer propertyId, MultipartFile[] files) {
