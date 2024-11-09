@@ -3,16 +3,19 @@ package com.example.DA.controller;
 
 import com.example.DA.service.MoMoPaymentService;
 import com.example.DA.service.PostService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api")
 public class PostPaymentController {
     @Autowired
     private MoMoPaymentService momoPaymentService;
@@ -34,6 +37,7 @@ public class PostPaymentController {
     public ResponseEntity<String> handleNotify(@RequestBody Map<String, Object> notification) {
         Integer postId = Integer.parseInt(notification.get("orderId").toString().split("_")[1]);
         String resultCode = (String) notification.get("resultCode");
+        System.out.println("Received notification from MoMo: " + notification);
 
         if ("0".equals(resultCode)) {
             // Cập nhật paymentStatus cho bài viết thành công
@@ -45,20 +49,25 @@ public class PostPaymentController {
     }
 
     @GetMapping("/payment/result")
-    public String handleRedirect(
+    public ResponseEntity<Void> handleRedirect(
             @RequestParam("orderId") String orderId,
             @RequestParam("resultCode") String resultCode,
-            @RequestParam("message") String message) {
+            @RequestParam("message") String message,
+            HttpServletResponse response) throws IOException {
 
         // Lấy thông tin postId từ orderId (ví dụ: POST_1_123456)
         Integer postId = Integer.parseInt(orderId.split("_")[1]);
 
-        // Kiểm tra trạng thái giao dịch và trả về thông báo
+        // Kiểm tra trạng thái giao dịch và cập nhật trạng thái
         if ("0".equals(resultCode)) {
-            postService.updatePaymentStatus(postId);
-            return "Thanh toán thành công cho bài đăng ID: " + postId;
-        } else {
-            return "Thanh toán thất bại: " + message;
+            postService.updatePaymentStatus(postId);  // Thanh toán thành công
         }
+
+        // Redirect người dùng về frontend (ví dụ: localhost:5173)
+        String redirectUrl = "http://localhost:5173/post/" + postId + "?resultCode=" + resultCode + "&message=" + message;
+        response.sendRedirect(redirectUrl);
+
+        return ResponseEntity.status(HttpStatus.FOUND).build();
     }
+
 }

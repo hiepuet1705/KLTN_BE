@@ -36,7 +36,7 @@ public class MoMoPaymentService {
         String orderId = "POST_" + postId + "_" + requestId;
         String orderInfo = "Payment for post ID " + postId;
         String extraData = ""; // Giữ trống nếu không có dữ liệu bổ sung
-        String redirectUrl = "http://localhost:5173/bds/" + postId;
+        String redirectUrl = "http://localhost:8080/api/payment/result";
 
         // Chuỗi rawData để tạo chữ ký, chú ý thứ tự tham số
         String rawData = "accessKey=" + accessKey

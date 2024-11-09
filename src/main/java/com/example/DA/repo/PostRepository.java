@@ -15,6 +15,12 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
+    @Query("SELECT p FROM Post p WHERE p.status = :status AND p.postType = :purpose")
+    List<Post> findByStatusAndPurpose(@Param("status") String status, @Param("purpose") String purpose);
+
+    // Tìm bài đăng theo ID tỉnh, trạng thái và mục đích
+    @Query("SELECT p FROM Post p WHERE p.property.province.id = :provinceId AND p.status = :status AND p.postType = :purpose")
+    List<Post> findPostsByProvinceAndPurpose(@Param("provinceId") Integer provinceId, @Param("status") String status, @Param("purpose") String purpose);
 
     @Query("SELECT COUNT(p) FROM Post p WHERE p.property.id = :propertyId AND p.status = 'approved'")
     Integer countApprovedPostsByPropertyId(@Param("propertyId") Integer propertyId);

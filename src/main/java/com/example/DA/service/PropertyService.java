@@ -37,4 +37,6 @@ public interface PropertyService {
 
     public Integer getPropertiesByProvinceOrAll(String province, Integer month, Integer year);
 
+    public PropertyDTOResponse patchProperty(Integer propertyId, PropertyDTORequest propertyDTORequest);
+
 }

@@ -137,6 +137,7 @@ public class UtilityServiceImpl implements UtilityService {
                     UtilityDTO dto = new UtilityDTO();
 
                     JsonNode nameNode = element.get("tags").get("name");
+                    System.out.println(nameNode);
                     if (nameNode != null)
                         dto.setUtilityName(nameNode.asText());
                     dto.setLat(element.get("lat").asDouble());

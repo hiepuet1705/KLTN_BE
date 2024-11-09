@@ -70,6 +70,31 @@ public class PropertyServiceImpl implements PropertyService {
     private GeoCodingService geoCodingService;
 
 
+    @Override
+    @Transactional
+    public PropertyDTOResponse patchProperty(Integer propertyId, PropertyDTORequest propertyDTORequest) {
+        // Tìm Property theo ID
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new EntityNotFoundException("Property not found with id: " + propertyId));
+
+        // Cập nhật các trường chỉ định nếu có giá trị
+        if (propertyDTORequest.getTitle() != null) {
+            property.setTitle(propertyDTORequest.getTitle());
+        }
+        if (propertyDTORequest.getDescription() != null) {
+            property.setDescription(propertyDTORequest.getDescription());
+        }
+        if (propertyDTORequest.getPrice() != null) {
+            property.setPrice(propertyDTORequest.getPrice());
+        }
+
+        // Lưu cập nhật vào cơ sở dữ liệu
+        propertyRepository.save(property);
+
+        return convertToDTO(property);
+    }
+
+
     public String updateCoordinates(Integer propertyId) {
         // Tìm kiếm Property dựa trên PropertyId
         Property property = propertyRepository.findById(propertyId).orElseThrow(() ->
@@ -159,9 +184,11 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public List<PropertyDTOResponse> getPropertiesByUserId(Integer userId) {
         return propertyRepository.findPropertiesByOwnerId(userId).stream()
+                .filter(property -> "approved".equals(property.getStatus())) // Lọc các thuộc tính có status là "approved"
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public Integer getPropertiesByProvinceOrAll(String province, Integer month, Integer year) {

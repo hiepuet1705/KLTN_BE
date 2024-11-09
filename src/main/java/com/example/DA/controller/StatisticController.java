@@ -25,8 +25,8 @@ public class StatisticController {
     public ResponseEntity<Map<String, Object>> getAveragePrice(
             @RequestParam(required = false, defaultValue = "all") String province,
             @RequestParam Integer month,
-            @RequestParam Integer year) {
-        String averagePrice = statisticService.getAveragePriceByProvince(province, month, year);
+            @RequestParam Integer year, @RequestParam String purpose) {
+        String averagePrice = statisticService.getAveragePriceByProvince(province, month, year, purpose);
 
         Map<String, Object> response = new HashMap<>();
         response.put("province", province);

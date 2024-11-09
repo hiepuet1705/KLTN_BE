@@ -23,6 +23,15 @@ public class PropertyController {
     private PropertyService propertyService;
 
 
+    @PatchMapping("/{propertyId}")
+    public ResponseEntity<PropertyDTOResponse> patchProperty(
+            @PathVariable Integer propertyId,
+            @RequestBody PropertyDTORequest propertyDTORequest) {
+
+        PropertyDTOResponse updatedProperty = propertyService.patchProperty(propertyId, propertyDTORequest);
+        return new ResponseEntity<>(updatedProperty, HttpStatus.OK);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PropertyDTOResponse> createProperty(@RequestBody PropertyDTORequest propertyDTO) {

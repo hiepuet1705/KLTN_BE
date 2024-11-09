@@ -24,29 +24,34 @@ public class StatisticServiceImp implements StatisticService {
     @Autowired
     private PostRepository postRepository;
 
-    public String getAveragePriceByProvince(String province, Integer month, Integer year) {
-        List<Property> properties;
-
+    public String getAveragePriceByProvince(String province, Integer month, Integer year, String purpose) {
+        List<Post> posts;
         if (province == null || province.isEmpty() || province.equalsIgnoreCase("all")) {
-            properties = propertyRepository.findByStatus("approved");
+            // Lấy tất cả bài đăng đã được phê duyệt cho mục đích được chỉ định
+            posts = postRepository.findByStatusAndPurpose("approved", purpose);
         } else {
+            // Tìm ID tỉnh dựa vào tên
             Integer provinceId = provinceRepository.findByName(province).get(0).getId();
-            properties = propertyRepository.findPropertiesByProvince(provinceId);
+            posts = postRepository.findPostsByProvinceAndPurpose(provinceId, "approved", purpose);
         }
 
-        // Filter by month and year, then calculate the average price
-        Double averagePrice = properties.stream()
-                .filter(property -> {
-                    LocalDateTime createdAt = property.getCreatedAt();
+        // Lọc theo tháng và năm, sau đó tính giá trung bình
+        Double averagePrice = posts.stream()
+                .filter(post -> {
+                    LocalDateTime createdAt = post.getProperty().getCreatedAt();
                     return createdAt.getMonthValue() == month && createdAt.getYear() == year;
                 })
-                .mapToDouble(Property::getPrice)
+                .mapToDouble(Post::getPrice)
                 .average()
-                .orElse(0.0); // Return 0.0 if there are no properties matching the filters
+                .orElse(0.0); // Trả về 0.0 nếu không có bài đăng nào phù hợp
 
-        // Convert to billions and format the result
-        double averagePriceInBillions = averagePrice / 1_000_000_000;
-        return String.format("%.2f tỷ", averagePriceInBillions);
+        if ("for_rent".equals(purpose)) {
+            double averagePriceInMillions = averagePrice / 1_000_000;
+            return String.format("%.2f triệu", averagePriceInMillions);
+        } else { // purpose là "for_sale" hoặc bất kỳ giá trị nào khác
+            double averagePriceInBillions = averagePrice / 1_000_000_000;
+            return String.format("%.2f tỷ", averagePriceInBillions);
+        }
     }
 
     @Override

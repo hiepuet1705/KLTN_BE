@@ -134,6 +134,7 @@ public class UserServiceImpl implements UserService {
                     userDTOResponse.setName(user.getName());
                     userDTOResponse.setUsername(user.getUsername());
                     userDTOResponse.setEmail(user.getEmail());
+                    userDTOResponse.setIsVerified(user.getIsVerified());
                     return userDTOResponse;
                 }).collect(Collectors.toList());
     }
