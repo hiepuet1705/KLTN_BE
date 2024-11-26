@@ -34,6 +34,9 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
 
     @Autowired
+    private FavoriteListRepository favoriteRepository;
+
+    @Autowired
     private PropertyRepository propertyRepository;
 
     @Autowired
@@ -94,14 +97,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Integer getPostByMonth(Integer month, Integer year) {
+    public List<PostWithPropertyDTO> getPostByUserIdAndStatus(Integer userId, String status) {
+        List<Post> posts = postRepository.findApprovedPostsByUserIdAndStatus(userId, status);
+        // Convert Post entities to PostDTOs
+        return posts.stream()
+                .map(this::convertToPostWithPropertyDTO)
+                .toList();
+    }
+
+    @Override
+    public Integer getPostByMonth(Integer month, Integer year, String type) {
         List<PostWithPropertyDTO> postWithPropertyDTOList = getPostsByStatus("approved");
 
 // Filter posts by the specified month and year, then count posts per day
         long postCount = postWithPropertyDTOList.stream()
                 .filter(post -> {
                     LocalDateTime createdAt = post.getCreatedAt();
-                    return createdAt.getMonthValue() == month && createdAt.getYear() == year;
+                    boolean matchesMonthYear = createdAt.getMonthValue() == month && createdAt.getYear() == year;
+                    if ("paid".equalsIgnoreCase(type)) {
+                        return matchesMonthYear && post.getCharged() == 1 && post.getPaymentStatus() == 1;
+                    } else if ("free".equalsIgnoreCase(type)) {
+                        return matchesMonthYear && post.getCharged() == 0;
+                    } else return matchesMonthYear;
                 })
                 .count();
 
@@ -155,7 +172,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Integer postId) {
-        postRepository.deleteById(postId);
+
+        favoriteRepository.deleteByPostId(postId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        postRepository.delete(post);
     }
 
     @Override
@@ -288,9 +308,10 @@ public class PostServiceImpl implements PostService {
 
         // Update status
         post.setStatus(status);
-        postRepository.save(post);
+        post.setCreatedAt(LocalDateTime.now());
+        Post newPost = postRepository.save(post);
 
-        return convertToPostWithPropertyDTO(post);
+        return convertToPostWithPropertyDTO(newPost);
     }
 
     @Override

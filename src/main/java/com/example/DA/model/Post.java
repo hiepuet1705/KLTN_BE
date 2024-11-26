@@ -32,7 +32,7 @@ public class Post extends DateTime {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    @Pattern(regexp = "pending|approved|expired", message = "status must be 'pending', 'approved', 'rejected', or 'expired'")
+    @Pattern(regexp = "pending|approved|expired|rejected", message = "status must be 'pending', 'approved', 'rejected', or 'expired'")
     @Column(name = "status", nullable = false)
     private String status = "pending";  // default value
 

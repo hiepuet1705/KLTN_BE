@@ -15,11 +15,13 @@ public interface PostService {
 
     List<PostWithPropertyDTO> getAllPosts();
 
-    public Integer getPostByMonth(Integer month, Integer year);
+    public Integer getPostByMonth(Integer month, Integer year, String type);
 
     List<PostWithPropertyDTO> getPostByPropertyId(Integer propertyId);
 
     List<PostWithPropertyDTO> getPostByUserId(Integer userId);
+
+    List<PostWithPropertyDTO> getPostByUserIdAndStatus(Integer userId, String status);
 
     PostWithPropertyDTO getPostById(Integer postId);
 

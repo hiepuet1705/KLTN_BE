@@ -24,6 +24,7 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+
     @GetMapping("/{id}")
     public PostWithPropertyDTO getPostWithProperty(@PathVariable Integer id) {
         postService.checkPostExpiration();
@@ -58,13 +59,21 @@ public class PostController {
 
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<List<PostWithPropertyDTO>> getPostsByUserId(@PathVariable Integer userId) {
-        List<PostWithPropertyDTO> posts = postService.getPostByUserId(userId);
+    public ResponseEntity<List<PostWithPropertyDTO>> getPostsByUserId(
+            @PathVariable Integer userId,
+            @RequestParam(name = "status", required = false) String status) {
+        List<PostWithPropertyDTO> posts;
+        if (status != null) {
+            posts = postService.getPostByUserIdAndStatus(userId, status);
+        } else {
+            posts = postService.getPostByUserId(userId);
+        }
         if (posts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
+
 
     @GetMapping("/status")
     public ResponseEntity<List<PostWithPropertyDTO>> getPostsByStatus(@RequestParam(name = "status", required = false, defaultValue = "pending") String status) {
@@ -79,9 +88,9 @@ public class PostController {
     @GetMapping("/count")
     public ResponseEntity<Integer> getPostCountByMonth(
             @RequestParam Integer month,
-            @RequestParam Integer year) {
+            @RequestParam Integer year, @RequestParam String type) {
 
-        int postCount = postService.getPostByMonth(month, year); // Call your service method
+        int postCount = postService.getPostByMonth(month, year, type); // Call your service method
         return ResponseEntity.ok(postCount);
     }
 
@@ -120,6 +129,7 @@ public class PostController {
 //    }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePost(@PathVariable Integer id) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
